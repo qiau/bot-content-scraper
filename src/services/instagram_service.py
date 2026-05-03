@@ -11,7 +11,7 @@ def build_headers(ig_account):
         "Cookie": f"sessionid={ig_account['sessionid']}; csrftoken={ig_account['csrftoken']};"
     }
 
-async def get_latest_posts(username, ig_account):
+async def get_latest_posts(username, ig_account, proxy=None):
     headers = build_headers(ig_account)
 
     timeout = aiohttp.ClientTimeout(total=15)
@@ -24,7 +24,7 @@ async def get_latest_posts(username, ig_account):
             # =========================
             url = f"https://www.instagram.com/api/v1/users/web_profile_info/?username={username}"
 
-            async with session.get(url) as res:
+            async with session.get(url, proxy=proxy) as res:
                 if res.status != 200:
                     print(f"[IG] {username} ❌ user info status {res.status}")
                     return None  
@@ -42,7 +42,7 @@ async def get_latest_posts(username, ig_account):
             # =========================
             feed_url = f"https://www.instagram.com/api/v1/feed/user/{user_id}/"
 
-            async with session.get(feed_url) as res:
+            async with session.get(feed_url, proxy=proxy) as res:
                 if res.status != 200:
                     print(f"[IG] {username} ❌ feed status {res.status}")
                     return None

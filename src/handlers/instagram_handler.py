@@ -3,19 +3,19 @@ import random
 
 from src.services.instagram_service import get_latest_posts
 from src.handlers.telegram_handler import (
-    send_photo, send_video, send_media_group
+    send_photo, send_video, send_media_group, send_message
 )
 from src.utils.storage import update_cache
 
-async def process_instagram(name, accounts, cache, ig_account):
+async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     instagram_user = accounts.get("instagram")
     if not instagram_user:
         return None
 
-    posts = await get_latest_posts(instagram_user, ig_account)
+    posts = await get_latest_posts(instagram_user, ig_account, proxy=proxy)
 
     if posts is None:
-        print(f"[IG] {instagram_user} ❌ fetch error")
+        print(f"[IG] {instagram_user} ❌ fetch error (proxy kemungkinan bermasalah)")
         return None
 
     if not posts:
@@ -64,6 +64,14 @@ async def process_instagram(name, accounts, cache, ig_account):
 
         except Exception as e:
             print(f"[IG] {instagram_user} ❌ gagal kirim {post_id}:", e)
+            fallback_caption = (
+                f"{caption}\n\n"
+                "⚠️ Media gagal dimuat, lihat langsung di Instagram"
+            )
+
+            await send_message(fallback_caption)
+            new_ids.append(post_id)
+            await asyncio.sleep(random.uniform(1, 3))
 
     if new_ids:
         update_cache(cache, instagram_user, new_ids)
