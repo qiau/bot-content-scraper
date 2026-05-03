@@ -62,6 +62,7 @@ async def process_x(name, accounts, cache, semaphore):
                     await send_message(msg)
 
                     new_ids.append(tweet_id)
+                    await asyncio.sleep(random.uniform(1, 3))
                     continue
 
                 for v in videos:
@@ -96,6 +97,7 @@ async def process_x(name, accounts, cache, semaphore):
                     await send_media_group(media_group)
 
                 new_ids.append(tweet_id)
+                await asyncio.sleep(random.uniform(1, 3))
 
             except Exception as e:
                 print(f"{x_user}: gagal kirim {tweet_id}:", e)

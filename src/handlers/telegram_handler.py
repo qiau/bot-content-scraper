@@ -2,6 +2,7 @@ import os
 import aiohttp
 import json
 import asyncio
+import random
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -106,5 +107,4 @@ async def send_media_group(media_group):
         except Exception as e:
             print("Error kirim album:", e)
 
-        # 🔥 delay kecil biar aman
-        await asyncio.sleep(1)
+        await asyncio.sleep(random.uniform(1,3))

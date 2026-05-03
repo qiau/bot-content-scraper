@@ -72,6 +72,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
                     await send_message(caption)
 
                 new_ids.append(vid)
+                await asyncio.sleep(random.uniform(1, 3))
 
             except Exception as e:
                 print(f"{tiktok_user}: gagal kirim {vid}:", e)
