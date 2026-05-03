@@ -19,7 +19,7 @@ async def process_instagram(name, accounts, cache, ig_account):
         print(f"[IG] {instagram_user} ⚠️ no post")
         return True
 
-    user_cache = cache.get(instagram_user, {}).get("instagram", [])
+    user_cache = cache.get(instagram_user, [])
     new_ids = []
 
     for post in posts:
@@ -62,6 +62,6 @@ async def process_instagram(name, accounts, cache, ig_account):
             print(f"[IG] {instagram_user} ❌ gagal kirim {post_id}:", e)
 
     if new_ids:
-        update_cache(cache, instagram_user, "instagram", new_ids)
+        update_cache(cache, instagram_user, new_ids)
     
     return True

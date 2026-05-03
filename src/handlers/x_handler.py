@@ -26,12 +26,13 @@ async def process_x(name, accounts, cache, semaphore):
             print(f"{x_user}: no data")
             return
 
+        user_cache = cache.get(x_user,[])
         new_ids = []
 
         for post in posts:
             tweet_id = post["id"]
 
-            if tweet_id in cache.get(x_user, {}).get("x", []):
+            if tweet_id in user_cache:
                 continue
 
             tweet_url = post["url"]
@@ -57,7 +58,7 @@ async def process_x(name, accounts, cache, semaphore):
                 videos, video_error, failed_count = extract_media_urls(tweet_url)
 
                 if video_error and not videos:
-                    msg = f"{caption}\n⚠️ {failed_count} video gagal didownload"
+                    msg = f"{caption}\n\n⚠️ {failed_count} video gagal didownload"
                     await send_message(msg)
 
                     new_ids.append(tweet_id)
@@ -73,7 +74,7 @@ async def process_x(name, accounts, cache, semaphore):
                         extra = ""
                         
                         if video_error:
-                            extra = f"\n⚠️ {failed_count} video gagal didownload"
+                            extra = f"\n\n⚠️ {failed_count} video gagal didownload"
 
                         item["caption"] = caption + extra
 
@@ -100,4 +101,4 @@ async def process_x(name, accounts, cache, semaphore):
                 print(f"{x_user}: gagal kirim {tweet_id}:", e)
 
         if new_ids:
-            update_cache(cache, x_user, "x", new_ids)
+            update_cache(cache, x_user, new_ids)
