@@ -76,5 +76,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
             except Exception as e:
                 print(f"{tiktok_user}: gagal kirim {vid}:", e)
 
+            await asyncio.sleep(random.uniform(2, 3))
+
         if new_ids:
             update_cache(cache, tiktok_user, new_ids)
