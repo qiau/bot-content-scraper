@@ -14,6 +14,7 @@ from src.handlers.x_handler import process_x
 from src.handlers.tiktok_handler import process_tiktok
 from src.handlers.instagram_handler import process_instagram
 from src.utils.storage import load_cache, save_cache
+from src.utils.telegram_queue import telegram_worker, telegram_queue
 
 load_dotenv()
 
@@ -76,6 +77,7 @@ async def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else None
 
     await init_telegram()
+    asyncio.create_task(telegram_worker())
 
     # =========================
     # 🔥 INSTAGRAM MODE
@@ -180,7 +182,7 @@ async def main():
 
         save_cache(cache, "tiktok")
 
-    # =========================
+    await telegram_queue.join()
     await close_telegram()
 
 
