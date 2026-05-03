@@ -14,7 +14,7 @@ async def process_x(name, accounts, cache, semaphore):
         return
 
     async with semaphore:
-        await asyncio.sleep(random.uniform(1, 2))
+        await asyncio.sleep(random.uniform(2, 3))
 
         try:
             posts = await get_latest_tweets(x_user, limit=3)
