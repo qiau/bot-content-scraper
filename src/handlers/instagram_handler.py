@@ -1,3 +1,6 @@
+import asyncio
+import random
+
 from src.services.instagram_service import get_latest_posts
 from src.handlers.telegram_handler import (
     send_photo, send_video, send_media_group
@@ -57,6 +60,7 @@ async def process_instagram(name, accounts, cache, ig_account):
                 await send_media_group(media_group)
 
             new_ids.append(post_id)
+            await asyncio.sleep(random.uniform(1, 3))
 
         except Exception as e:
             print(f"[IG] {instagram_user} ❌ gagal kirim {post_id}:", e)
