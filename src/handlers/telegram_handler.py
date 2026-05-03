@@ -107,4 +107,4 @@ async def send_media_group(media_group):
         except Exception as e:
             print("Error kirim album:", e)
 
-        await asyncio.sleep(random.uniform(1,3))
+        await asyncio.sleep(random.uniform(3,5))

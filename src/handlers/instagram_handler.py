@@ -60,7 +60,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
                 await send_media_group(media_group)
 
             new_ids.append(post_id)
-            await asyncio.sleep(random.uniform(1, 3))
+            await asyncio.sleep(random.uniform(3, 5))
 
         except Exception as e:
             print(f"[IG] {instagram_user} ❌ gagal kirim {post_id}:", e)
@@ -71,7 +71,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
 
             await send_message(fallback_caption)
             new_ids.append(post_id)
-            await asyncio.sleep(random.uniform(1, 3))
+            await asyncio.sleep(random.uniform(3, 5))
 
     if new_ids:
         update_cache(cache, instagram_user, new_ids)
