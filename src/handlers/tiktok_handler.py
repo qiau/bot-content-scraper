@@ -17,7 +17,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
         return
 
     async with semaphore:
-        await asyncio.sleep(random.uniform(1, 2))
+        await asyncio.sleep(random.uniform(2, 3))
 
         try:
             videos = await get_latest_tiktoks(tiktok_user, limit=3)
