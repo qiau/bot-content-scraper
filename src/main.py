@@ -23,7 +23,7 @@ with open("data/targets.json", "r") as f:
 semaphore = asyncio.Semaphore(3)
 
 # =========================
-# 🔥 LOAD IG ACCOUNTS (DYNAMIC)
+# 🔥 LOAD IG ACCOUNTS
 # =========================
 def load_ig_accounts():
     accounts = []
@@ -48,24 +48,29 @@ def load_ig_accounts():
 
     return accounts
 
+
 # =========================
 # 🔥 SPLIT TARGETS
 # =========================
 def chunk_targets(targets, n):
     items = list(targets.items())
-    random.shuffle(items) 
+    random.shuffle(items)
     return [items[i::n] for i in range(n)]
+
 
 # =========================
 # MAIN
 # =========================
 async def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else None
-    cache = load_cache()
 
     await init_telegram()
 
+    # =========================
+    # 🔥 INSTAGRAM MODE
+    # =========================
     if mode == "instagram":
+        cache = load_cache("instagram")
 
         IG_ACCOUNTS = load_ig_accounts()
         chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
@@ -76,6 +81,7 @@ async def main():
             print(f"🚀 IG Account {i+1} mulai ({len(chunk)} target)")
 
             fail_count = 0
+            counter = 0
 
             for name, accounts in chunk:
                 result = await process_instagram(
@@ -98,27 +104,64 @@ async def main():
                     await send_message(msg)
                     break
 
-                # 🔥 delay antar user (natural)
-                await asyncio.sleep(random.uniform(10, 15))
+                counter += 1
 
-            # 🔥 cooldown antar akun (PENTING)
-            await asyncio.sleep(random.uniform(20, 40))
+                # 🔥 BREAK PATTERN (anti bot)
+                if counter % random.randint(4, 6) == 0:
+                    sleep_time = random.uniform(120, 300)  # 2–5 menit
+                    print(f"🛑 Cooldown panjang {sleep_time:.0f}s")
+                    await asyncio.sleep(sleep_time)
 
-    else:
-        tasks = []
+                # 🔥 delay normal (lebih natural)
+                await asyncio.sleep(random.uniform(25, 70))
 
-        for name, accounts in TARGETS.items():
-            if mode == "x":
-                tasks.append(process_x(name, accounts, cache, semaphore))
+                # 🔥 stop sebelum kena limit IG
+                if counter >= random.randint(12, 15):
+                    print("⚠️ Stop awal untuk hindari limit IG")
+                    break
 
-            elif mode == "tiktok":
-                tasks.append(process_tiktok(name, accounts, cache, semaphore))
+            # 🔥 cooldown antar akun (WAJIB panjang)
+            cooldown = random.uniform(300, 900)  # 5–15 menit
+            print(f"😴 Cooldown antar akun {cooldown:.0f}s")
+            await asyncio.sleep(cooldown)
+
+        save_cache(cache, "instagram")
+
+    # =========================
+    # 🔥 X MODE
+    # =========================
+    elif mode == "x":
+        cache = load_cache("x")
+
+        tasks = [
+            process_x(name, accounts, cache, semaphore)
+            for name, accounts in TARGETS.items()
+        ]
 
         if tasks:
             await asyncio.gather(*tasks)
 
+        save_cache(cache, "x")
+
+    # =========================
+    # 🔥 TIKTOK MODE
+    # =========================
+    elif mode == "tiktok":
+        cache = load_cache("tiktok")
+
+        tasks = [
+            process_tiktok(name, accounts, cache, semaphore)
+            for name, accounts in TARGETS.items()
+        ]
+
+        if tasks:
+            await asyncio.gather(*tasks)
+
+        save_cache(cache, "tiktok")
+
+    # =========================
     await close_telegram()
-    save_cache(cache)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

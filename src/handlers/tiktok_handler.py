@@ -29,10 +29,11 @@ async def process_tiktok(name, accounts, cache, semaphore):
             print(f"{tiktok_user}: no data")
             return
 
+        user_cache = cache.get(tiktok_user,[])
         new_ids = []
 
         for vid in videos:
-            if vid in cache.get(tiktok_user, {}).get("tiktok", []):
+            if vid in user_cache:
                 continue
 
             link = f"https://www.tiktok.com/@{tiktok_user}/video/{vid}"
@@ -76,4 +77,4 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 print(f"{tiktok_user}: gagal kirim {vid}:", e)
 
         if new_ids:
-            update_cache(cache, tiktok_user, "tiktok", new_ids)
+            update_cache(cache, tiktok_user, new_ids)
