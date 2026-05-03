@@ -113,15 +113,10 @@ async def main():
                     await asyncio.sleep(sleep_time)
 
                 # 🔥 delay normal (lebih natural)
-                await asyncio.sleep(random.uniform(25, 70))
-
-                # 🔥 stop sebelum kena limit IG
-                if counter >= random.randint(12, 15):
-                    print("⚠️ Stop awal untuk hindari limit IG")
-                    break
+                await asyncio.sleep(random.uniform(35, 60))
 
             # 🔥 cooldown antar akun (WAJIB panjang)
-            cooldown = random.uniform(300, 900)  # 5–15 menit
+            cooldown = random.uniform(300, 600)  # 5–15 menit
             print(f"😴 Cooldown antar akun {cooldown:.0f}s")
             await asyncio.sleep(cooldown)
 
