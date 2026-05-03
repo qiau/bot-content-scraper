@@ -48,6 +48,17 @@ def load_ig_accounts():
 
     return accounts
 
+# =========================
+# 🔥 LOAD PROXIES
+# =========================
+def load_proxies():
+    with open("data/proxy_ig.txt", "r") as f:
+        proxies = [line.strip() for line in f if line.strip()]
+
+    if not proxies:
+        raise ValueError("❌ Tidak ada proxy di proxy_ig.txt")
+
+    return proxies
 
 # =========================
 # 🔥 SPLIT TARGETS
@@ -73,12 +84,26 @@ async def main():
         cache = load_cache("instagram")
 
         IG_ACCOUNTS = load_ig_accounts()
+        PROXIES = load_proxies()
+
+        if len(PROXIES) < len(IG_ACCOUNTS):
+            raise ValueError("❌ Jumlah proxy harus >= jumlah akun IG")
+
+        # 🔥 OPTIONAL: random proxy tiap run (aman)
+        # random.shuffle(PROXIES)
+
+        account_proxy_map = {
+            i: PROXIES[i] for i in range(len(IG_ACCOUNTS))
+        }
+
         chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
 
         for i, chunk in enumerate(chunks):
             ig_account = IG_ACCOUNTS[i]
+            proxy = account_proxy_map[i]
 
             print(f"🚀 IG Account {i+1} mulai ({len(chunk)} target)")
+            print(f"🌐 Proxy: {proxy}")
 
             fail_count = 0
             counter = 0
@@ -88,7 +113,8 @@ async def main():
                     name,
                     accounts,
                     cache,
-                    ig_account
+                    ig_account,
+                    proxy=proxy
                 )
 
                 if result is None:
@@ -99,7 +125,7 @@ async def main():
                 if fail_count >= 2:
                     msg = (
                         f"🚨 IG Account {i+1} ERROR!\n"
-                        "Cek session / cookies sekarang"
+                        "Kena limit / proxy bermasalah"
                     )
                     await send_message(msg)
                     break
@@ -116,7 +142,7 @@ async def main():
                 await asyncio.sleep(random.uniform(35, 60))
 
             # 🔥 cooldown antar akun (WAJIB panjang)
-            cooldown = random.uniform(300, 600)  # 5–15 menit
+            cooldown = random.uniform(300, 600)  # 5–10 menit
             print(f"😴 Cooldown antar akun {cooldown:.0f}s")
             await asyncio.sleep(cooldown)
 

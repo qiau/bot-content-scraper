@@ -3,7 +3,7 @@ import asyncio
 
 def load_proxies():
     try:
-        with open("data/proxy2.txt") as f:
+        with open("data/proxy_x.txt") as f:
             return [line.strip() for line in f if line.strip()]
     except:
         return []
