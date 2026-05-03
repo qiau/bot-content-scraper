@@ -7,16 +7,16 @@ from src.utils.telegram_queue import enqueue
 
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-
 session = None
+TOKEN = None
+CHAT_ID = os.getenv("CHAT_ID")
 
 # =========================
 # 🔥 INIT / CLOSE
 # =========================
-async def init_telegram():
-    global session
+async def init_telegram(token):
+    global session, TOKEN
+    TOKEN = token
     session = aiohttp.ClientSession()
 
 async def close_telegram():
