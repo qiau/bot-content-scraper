@@ -100,5 +100,7 @@ async def process_x(name, accounts, cache, semaphore):
             except Exception as e:
                 print(f"{x_user}: gagal kirim {tweet_id}:", e)
 
+            await asyncio.sleep(random.uniform(2, 3))
+
         if new_ids:
             update_cache(cache, x_user, new_ids)
