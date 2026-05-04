@@ -10,6 +10,7 @@ load_dotenv()
 session = None
 TOKEN = None
 CHAT_ID = os.getenv("CHAT_ID")
+ADMIN_ID = os.getenv("ADMIN_ID")
 
 # =========================
 # 🔥 INIT / CLOSE
@@ -21,6 +22,12 @@ async def init_telegram(token):
 
 async def close_telegram():
     await session.close()
+
+# =========================
+# 🔒 AUTH (buat nanti command)
+# =========================
+def is_admin(user_id: int):
+    return str(user_id) == ADMIN_ID
 
 # =========================
 # 🔵 INTERNAL (REAL SENDER)

@@ -12,6 +12,7 @@ from src.handlers.telegram_handler import (
 from src.handlers.instagram_handler import process_instagram
 from src.utils.storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
+from src.utils.runtime import set_ig_mode, is_ig_running
 
 load_dotenv()
 
@@ -51,6 +52,10 @@ def chunk_targets(targets, n):
     return [items[i::n] for i in range(n)]
 
 async def main():
+    if not is_ig_running():
+        print("⛔ IG mode STOP (skip run)")
+        return
+    
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
     asyncio.create_task(telegram_worker())
 
@@ -60,7 +65,7 @@ async def main():
     PROXIES = load_proxies()
 
     if len(PROXIES) < len(IG_ACCOUNTS):
-            raise ValueError("❌ Jumlah proxy harus >= jumlah akun IG")
+        raise ValueError("❌ Jumlah proxy harus >= jumlah akun IG")
 
     # 🔥 OPTIONAL: random proxy tiap run (aman)
     # random.shuffle(PROXIES)
@@ -71,7 +76,13 @@ async def main():
 
     chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
 
+    should_stop_after_run = False
+
     for i, chunk in enumerate(chunks):
+        if not is_ig_running():
+            print("⛔ Dihentikan sebelum mulai akun")
+            break
+
         ig_account = IG_ACCOUNTS[i]
         proxy = account_proxy_map[i]
 
@@ -82,6 +93,10 @@ async def main():
         counter = 0
 
         for name, accounts in chunk:
+            if not is_ig_running():
+                print("⛔ Dihentikan oleh Telegram")
+                break
+
             result = await process_instagram(
                 name,
                 accounts,
@@ -98,9 +113,11 @@ async def main():
             if fail_count >= 2:
                 msg = (
                     f"🚨 IG Account {i+1} ERROR!\n"
-                    "Kena limit / proxy bermasalah"
+                    "Akun ini dilewati\n"
+                    "⏳ Sistem akan dihentikan setelah semua akun selesai"
                 )
                 await send_message(msg)
+                should_stop_after_run = True
                 break
 
             counter += 1
@@ -119,6 +136,10 @@ async def main():
         await asyncio.sleep(cooldown)
 
     save_cache(cache, "instagram")
+
+    if should_stop_after_run:
+        await send_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
+        set_ig_mode("stopped")
 
     await telegram_queue.join()
     await close_telegram()
