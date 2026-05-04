@@ -54,7 +54,7 @@ async def handle_update(update):
 
     elif text == "/status_ig":
         status = "🟢 RUNNING" if is_ig_running() else "🔴 STOPPED"
-        await _send_message(f"IG Status: {status}")
+        await _send_message(f"Status: {status}")
 
 
 # =========================
