@@ -6,7 +6,9 @@ venv/
 .env
 
 #data
-data/
+data/*
+!data/
+!data/targets.json
 
 # Python cache
 __pycache__/
