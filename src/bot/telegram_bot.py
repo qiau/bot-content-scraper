@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from src.handlers.telegram_handler import (
     init_telegram,
-    send_message,
+    _send_message,
     is_admin
 )
 from src.utils.runtime import set_ig_mode, is_ig_running
@@ -33,7 +33,7 @@ async def handle_update(update):
     # COMMAND
     # =========================
     if text == "/start":
-        await send_message(
+        await _send_message(
             "🤖 Bot siap\n\n"
             "/start_ig\n"
             "/stop_ig\n"
@@ -44,17 +44,17 @@ async def handle_update(update):
         if is_ig_running():
             return
         set_ig_mode("running")
-        await send_message("🟢 IG diaktifkan")
+        await _send_message("🟢 IG diaktifkan")
 
     elif text == "/stop_ig":
         if not is_ig_running():
             return
         set_ig_mode("stopped")
-        await send_message("🔴 IG dihentikan")
+        await _send_message("🔴 IG dihentikan")
 
     elif text == "/status_ig":
         status = "🟢 RUNNING" if is_ig_running() else "🔴 STOPPED"
-        await send_message(f"IG Status: {status}")
+        await _send_message(f"IG Status: {status}")
 
 
 # =========================
