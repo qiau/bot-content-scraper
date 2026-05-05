@@ -40,6 +40,8 @@ async def handle_update(update):
             "/start_ig\n"
             "/stop_ig\n"
             "/status_ig\n"
+            "/set_ig\n"
+            "/get_ig"
         )
 
     elif cmd == "/start_ig":
