@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from src.handlers.telegram_handler import (
     send_message,
     init_telegram,
-    close_telegram,
+    close_telegram, _send_message
 )
 from src.handlers.instagram_handler import process_instagram
 from src.services.proxy_service import load_proxies, get_proxies  
@@ -21,23 +21,9 @@ def load_targets():
     with open("data/targets.json", "r") as f:
         return json.load(f)
     
-# =========================
-# CONFIG & PROXY UTILS
-# =========================
 def load_config():
     with open("data/config.json", "r") as f:
         return json.load(f)
-
-def load_dead_proxies():
-    try:
-        with open("data/proxy_ig_dead.txt") as f:
-            return set(line.strip() for line in f if line.strip())
-    except:
-        return set()
-
-def save_dead_proxy(proxy):
-    with open("data/proxy_ig_dead.txt", "a") as f:
-        f.write(proxy + "\n")
 
 def chunk_targets(targets, n):
     items = list(targets.items())
@@ -50,8 +36,25 @@ async def main():
         return
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
-    await load_proxies("ig")
 
+    try:
+        await load_proxies("ig")
+    except Exception as e:
+        msg = f"🚨 Gagal ambil proxy IG\nError: {e}"
+        print(msg)
+        await _send_message(msg)
+        await close_telegram()
+        return
+
+    PROXIES = get_proxies("ig")
+
+    if not PROXIES:
+        msg = "🚨 Proxy IG kosong / gagal di-load dari Webshare"
+        print(msg)
+        await _send_message(msg)
+        await close_telegram()
+        return
+    
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("instagram")
@@ -62,22 +65,6 @@ async def main():
     if not IG_ACCOUNTS:
         raise ValueError("❌ Tidak ada IG account")
 
-    PROXIES = get_proxies("ig")
-    if not PROXIES:
-        raise ValueError("❌ Proxy IG kosong")
-
-    # =========================
-    # FILTER PROXY MATI
-    # =========================
-    dead_proxies = load_dead_proxies()
-    PROXIES = [p for p in PROXIES if p not in dead_proxies]
-
-    if not PROXIES:
-        raise ValueError("❌ Semua proxy mati!")
-
-    # =========================
-    # 🔥 ROLLING PROXY
-    # =========================
     random.shuffle(PROXIES)
 
     account_proxy_map = {
@@ -130,9 +117,6 @@ async def main():
                     "Proxy ditandai sebagai mati atau IG Error"
                 )
                 await send_message(msg)
-
-                save_dead_proxy(proxy)
-
                 should_stop_after_run = True
                 break
 

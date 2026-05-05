@@ -49,6 +49,6 @@ async def load_proxies(service: str):
         print(f"❌ Gagal load proxy {service}:", e)
         PROXIES[service] = []
 
-
+9
 def get_proxies(service: str):
     return PROXIES.get(service, [])
