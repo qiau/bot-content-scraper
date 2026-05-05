@@ -10,6 +10,7 @@ from src.handlers.telegram_handler import (
     close_telegram,
 )
 from src.handlers.instagram_handler import process_instagram
+from src.services.proxy_service import load_proxies, get_proxies  
 from src.utils.storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
 from src.utils.runtime import set_ig_mode, is_ig_running
@@ -49,6 +50,8 @@ async def main():
         return
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
+    await load_proxies("ig")
+
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("instagram")
@@ -56,11 +59,10 @@ async def main():
     config = load_config()
 
     IG_ACCOUNTS = config.get("instagram_accounts", [])
-    PROXIES = config.get("proxy_ig", [])
-
     if not IG_ACCOUNTS:
         raise ValueError("❌ Tidak ada IG account")
 
+    PROXIES = get_proxies("ig")
     if not PROXIES:
         raise ValueError("❌ Proxy IG kosong")
 

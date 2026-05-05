@@ -8,6 +8,7 @@ from src.handlers.telegram_handler import (
     close_telegram,
 )
 from src.handlers.x_handler import process_x
+from src.services.proxy_service import load_proxies 
 from src.utils.storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
 
@@ -20,6 +21,8 @@ semaphore = asyncio.Semaphore(3)
 
 async def main():
     await init_telegram(os.getenv("TELEGRAM_TOKEN_SOCIAL"))
+    await load_proxies("x")
+    
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("x")
