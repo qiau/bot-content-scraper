@@ -16,35 +16,27 @@ from src.utils.runtime import set_ig_mode, is_ig_running
 
 load_dotenv()
 
-with open("data/targets.json", "r") as f:
-    TARGETS = json.load(f)
+def load_targets():
+    with open("data/targets.json", "r") as f:
+        return json.load(f)
+    
+# =========================
+# CONFIG & PROXY UTILS
+# =========================
+def load_config():
+    with open("data/config.json", "r") as f:
+        return json.load(f)
 
-def load_ig_accounts():
-    accounts = []
-    i = 1
+def load_dead_proxies():
+    try:
+        with open("data/proxy_ig_dead.txt") as f:
+            return set(line.strip() for line in f if line.strip())
+    except:
+        return set()
 
-    while True:
-        session = os.getenv(f"IG_SESSIONID_{i}")
-        csrf = os.getenv(f"IG_CSRFTOKEN_{i}")
-
-        if not session or not csrf:
-            break
-
-        accounts.append({
-            "sessionid": session,
-            "csrftoken": csrf
-        })
-
-        i += 1
-
-    if not accounts:
-        raise ValueError("❌ Tidak ada IG account")
-
-    return accounts
-
-def load_proxies():
-    with open("data/proxy_ig.txt", "r") as f:
-        return [line.strip() for line in f if line.strip()]
+def save_dead_proxy(proxy):
+    with open("data/proxy_ig_dead.txt", "a") as f:
+        f.write(proxy + "\n")
 
 def chunk_targets(targets, n):
     items = list(targets.items())
@@ -60,18 +52,34 @@ async def main():
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("instagram")
+    TARGETS = load_targets()
+    config = load_config()
 
-    IG_ACCOUNTS = load_ig_accounts()
-    PROXIES = load_proxies()
+    IG_ACCOUNTS = config.get("instagram_accounts", [])
+    PROXIES = config.get("proxy_ig", [])
 
-    if len(PROXIES) < len(IG_ACCOUNTS):
-        raise ValueError("❌ Jumlah proxy harus >= jumlah akun IG")
+    if not IG_ACCOUNTS:
+        raise ValueError("❌ Tidak ada IG account")
 
-    # 🔥 OPTIONAL: random proxy tiap run (aman)
-    # random.shuffle(PROXIES)
+    if not PROXIES:
+        raise ValueError("❌ Proxy IG kosong")
+
+    # =========================
+    # FILTER PROXY MATI
+    # =========================
+    dead_proxies = load_dead_proxies()
+    PROXIES = [p for p in PROXIES if p not in dead_proxies]
+
+    if not PROXIES:
+        raise ValueError("❌ Semua proxy mati!")
+
+    # =========================
+    # 🔥 ROLLING PROXY
+    # =========================
+    random.shuffle(PROXIES)
 
     account_proxy_map = {
-        i: PROXIES[i] for i in range(len(IG_ACCOUNTS))
+        i: PROXIES[i % len(PROXIES)] for i in range(len(IG_ACCOUNTS))
     }
 
     chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
@@ -86,7 +94,7 @@ async def main():
         ig_account = IG_ACCOUNTS[i]
         proxy = account_proxy_map[i]
 
-        print(f"🚀 IG Account {i+1} mulai ({len(chunk)} target)")
+        print(f"🚀 {ig_account['name']} mulai ({len(chunk)} target)")
         print(f"🌐 Proxy: {proxy}")
         
         fail_count = 0
@@ -110,13 +118,19 @@ async def main():
             else:
                 fail_count = 0
             
+            # =========================
+            # 🔥 PROXY ERROR DETECT
+            # =========================
             if fail_count >= 2:
                 msg = (
-                    f"🚨 IG Account {i+1} ERROR!\n"
-                    "Akun ini dilewati\n"
-                    "⏳ Sistem akan dihentikan setelah semua akun selesai"
+                    f"🚨 {ig_account['name']} ERROR\n"
+                    f"Proxy: {proxy}\n"
+                    "Proxy ditandai sebagai mati atau IG Error"
                 )
                 await send_message(msg)
+
+                save_dead_proxy(proxy)
+
                 should_stop_after_run = True
                 break
 
