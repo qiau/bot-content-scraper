@@ -14,7 +14,7 @@ from src.bot.state import set_state, get_state, clear_state
 
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN_IG")
+TOKEN = os.getenv("TELEGRAM_TOKEN_ADMIN")
 
 # =========================
 # 🔥 HANDLE UPDATE
