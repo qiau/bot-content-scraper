@@ -1,17 +1,10 @@
 import random
 import asyncio
+from src.services.proxy_service import get_proxies
 
-def load_proxies():
-    try:
-        with open("data/proxy_x.txt") as f:
-            return [line.strip() for line in f if line.strip()]
-    except:
-        return []
-
-PROXIES = load_proxies()
 
 async def fetch(session, url):
-    proxies = PROXIES.copy()
+    proxies = get_proxies("x")
     random.shuffle(proxies)
 
     for proxy in proxies:
@@ -22,7 +15,7 @@ async def fetch(session, url):
                 return await res.text()
 
         except Exception:
-            print(f"Proxy gagal: {proxy}")
+            print(f"Proxy X gagal: {proxy}")
 
-    print("Semua proxy gagal")
+    print("Semua proxy X gagal")
     return None
