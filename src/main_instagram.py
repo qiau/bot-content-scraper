@@ -31,9 +31,14 @@ def chunk_targets(targets, n):
     return [items[i::n] for i in range(n)]
 
 async def main():
+
     if not is_ig_running():
         print("⛔ IG mode STOP (skip run)")
         return
+    
+    delay = random.randint(0, 3600) 
+    print(f"⏳ Delay start {delay} detik")
+    await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
 

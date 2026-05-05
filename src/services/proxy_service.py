@@ -14,7 +14,6 @@ PROXIES = {
     "ig": [],
 }
 
-
 async def load_proxies(service: str):
     global PROXIES
 
