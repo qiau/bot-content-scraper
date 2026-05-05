@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.getenv("TELEGRAM_TOKEN_IG")
+TOKEN = os.getenv("TELEGRAM_TOKEN_ADMIN")
 CONFIG_PATH = "data/config.json"
 
 
