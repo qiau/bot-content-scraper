@@ -67,11 +67,11 @@ async def handle_update(update):
     # =========================
     elif text == "/update_proxy_ig":
         set_state(user_id, "waiting_proxy_ig")
-        await _send_message("📥 Silakan upload file proxy IG")
+        await _send_message("📥 Silakan upload file proxy IG (akan expired dalam 10 menit)")
 
     elif text == "/update_proxy_x":
         set_state(user_id, "waiting_proxy_x")
-        await _send_message("📥 Silakan upload file proxy X")
+        await _send_message("📥 Silakan upload file proxy X (akan expired dalam 10 menit)")
 
     elif text == "/cancel_proxy_update":
         if get_state(user_id):
