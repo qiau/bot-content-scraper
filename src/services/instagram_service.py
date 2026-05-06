@@ -1,4 +1,5 @@
 import aiohttp
+import asyncio
 
 def build_headers(ig_account):
     sessionid = ig_account.get("sessionid")
@@ -25,8 +26,14 @@ def build_headers(ig_account):
     }
 
 async def get_latest_posts(username, ig_account, proxy=None):
-    headers = build_headers(ig_account)
 
+    try:
+        headers = build_headers(ig_account)
+
+    except Exception as e:
+        print(f"[IG] {username} ❌ header error:", e)
+        return "ig_error"
+    
     timeout = aiohttp.ClientTimeout(total=15)
 
     try:
@@ -39,16 +46,43 @@ async def get_latest_posts(username, ig_account, proxy=None):
 
             async with session.get(url, proxy=proxy) as res:
                 if res.status != 200:
-                    print(f"[IG] {username} ❌ user info status {res.status}")
-                    return None  
-                
-                data = await res.json()
+                    print(
+                        f"[IG] {username} ❌ user info status {res.status}"
+                    )
+
+                    # proxy / rate limit
+                    if res.status in [429, 502, 503, 504]:
+                        return "proxy_error"
+
+                    return "ig_error"
+
+                try:
+                    data = await res.json()
+
+                except Exception:
+                    text = await res.text()
+
+                    print(
+                        f"[IG] {username} ❌ invalid json user info"
+                    )
+
+                    print(text[:300])
+
+                    return "ig_error"
 
             if data.get("status") != "ok":
                 print(f"[IG] {username} ❌ user info error")
-                return None
+                return "ig_error"
 
-            user_id = data["data"]["user"]["id"]
+            user = data.get("data", {}).get("user")
+
+            if not user:
+                return "ig_error"
+
+            user_id = user.get("id")
+
+            if not user_id:
+                return "ig_error"
 
             # =========================
             # 🔹 STEP 2: ambil feed
@@ -56,11 +90,30 @@ async def get_latest_posts(username, ig_account, proxy=None):
             feed_url = f"https://www.instagram.com/api/v1/feed/user/{user_id}/"
 
             async with session.get(feed_url, proxy=proxy) as res:
+         
                 if res.status != 200:
-                    print(f"[IG] {username} ❌ feed status {res.status}")
-                    return None
-                
-                feed_data = await res.json()
+                    print(
+                        f"[IG] {username} ❌ feed status {res.status}"
+                    )
+
+                    if res.status in [429, 502, 503, 504]:
+                        return "proxy_error"
+
+                    return "ig_error"
+
+                try:
+                    feed_data = await res.json()
+
+                except Exception:
+                    text = await res.text()
+
+                    print(
+                        f"[IG] {username} ❌ invalid json feed"
+                    )
+
+                    print(text[:300])
+
+                    return "ig_error"
 
             items = feed_data.get("items", [])
 
@@ -72,6 +125,10 @@ async def get_latest_posts(username, ig_account, proxy=None):
 
             for item in items[:3]:
                 shortcode = item.get("code")
+
+                if not shortcode:
+                    continue
+
                 media = []
 
                 # =========================
@@ -87,10 +144,17 @@ async def get_latest_posts(username, ig_account, proxy=None):
                                 "url": m["video_versions"][0]["url"]
                             })
                         elif m.get("image_versions2"):
-                            media.append({
-                                "type": "image",
-                                "url": m["image_versions2"]["candidates"][0]["url"]
-                            })
+                          
+                            candidates = (
+                                m["image_versions2"]
+                                .get("candidates", [])
+                            )
+
+                            if candidates:
+                                media.append({
+                                    "type": "image",
+                                    "url": candidates[0]["url"]
+                                })
 
                 # =========================
                 # 🎥 VIDEO
@@ -98,17 +162,26 @@ async def get_latest_posts(username, ig_account, proxy=None):
                 elif item.get("video_versions"):
                     media.append({
                         "type": "video",
-                        "url": item["video_versions"][0]["url"]
+                        "url": (
+                            item["video_versions"][0]["url"]
+                        )
                     })
 
                 # =========================
                 # 🖼️ IMAGE
                 # =========================
                 elif item.get("image_versions2"):
-                    media.append({
-                        "type": "image",
-                        "url": item["image_versions2"]["candidates"][0]["url"]
-                    })
+           
+                    candidates = (
+                        item["image_versions2"]
+                        .get("candidates", [])
+                    )
+
+                    if candidates:
+                        media.append({
+                            "type": "image",
+                            "url": candidates[0]["url"]
+                        })
 
                 if not media:
                     continue
@@ -122,6 +195,16 @@ async def get_latest_posts(username, ig_account, proxy=None):
 
             return results
 
+    except (
+        aiohttp.ClientProxyConnectionError,
+        aiohttp.ClientConnectorError,
+        asyncio.TimeoutError
+    ) as e:
+
+        print(f"[IG] {username} ❌ proxy error:", e)
+
+        return "proxy_error"
+    
     except Exception as e:
         print(f"[IG] {username} ❌ error:", e)
-        return None
+        return "ig_error"

@@ -6,14 +6,19 @@ from src.utils.storage import update_cache
 
 async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     instagram_user = accounts.get("instagram")
+
     if not instagram_user:
-        return None
+        return "skip"
 
     posts = await get_latest_posts(instagram_user, ig_account, proxy=proxy)
 
-    if posts is None:
-        print(f"[IG] {instagram_user} ❌ fetch error (proxy kemungkinan bermasalah)")
-        return None
+    if posts == "proxy_error":
+        print(f"[IG] {instagram_user} ❌ proxy error")
+        return "proxy_error"
+
+    if posts == "ig_error":
+        print(f"[IG] {instagram_user} ❌ IG error")
+        return "ig_error"
 
     if not posts:
         print(f"[IG] {instagram_user} ⚠️ no post")
@@ -23,13 +28,23 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     new_ids = []
 
     for post in posts:
-        post_id = post["shortcode"]
+        post_id = post.get["shortcode"]
+
+        if not post_id:
+            continue
 
         if post_id in user_cache:
             continue
 
+        if not post.get("media"):
+            continue
+
         link = f"https://www.instagram.com/p/{post_id}/"
-        caption = f"📸 {name} ({instagram_user})\n{link}"
+        
+        caption = (
+            f"📸 {name} ({instagram_user})\n"
+            f"{link}"
+        )
 
         media_group = []
 
