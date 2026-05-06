@@ -60,7 +60,7 @@ async def handle_update(update):
         status = "🟢 RUNNING" if is_ig_running() else "🔴 STOPPED"
         await _send_message(f"Status: {status}")
 
-    elif cmd.startswith("/set_ig"):
+    elif cmd.startswith("/set_ig "):
         parts = text.split()
 
         if len(parts) != 4:
@@ -78,7 +78,7 @@ async def handle_update(update):
         else:
             await _send_message(f"❌ Akun {name} tidak ditemukan")
 
-    elif cmd.startswith("/get_ig"):
+    elif cmd.startswith("/get_ig "):
         parts = text.split()
 
         if len(parts) != 2:
