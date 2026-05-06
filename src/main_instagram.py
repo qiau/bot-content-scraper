@@ -37,7 +37,6 @@ async def main():
         return
     
     delay = random.randint(0, 3600) 
-    print(f"⏳ Delay start {delay} detik")
     await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
@@ -106,8 +105,13 @@ async def main():
                 proxy=proxy
             )
 
-            if result is None:
+            if result == "proxy_error":
                 fail_count += 1
+
+            elif result == "ig_error":
+                # IG error tidak dianggap proxy mati
+                print(f"⚠️ IG error pada {name}")
+
             else:
                 fail_count = 0
             
