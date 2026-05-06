@@ -1,14 +1,27 @@
 import aiohttp
 
 def build_headers(ig_account):
+    sessionid = ig_account.get("sessionid")
+    csrftoken = ig_account.get("csrftoken")
+
+    if not sessionid or not csrftoken:
+        raise ValueError("Cookie IG kosong")
+    
     return {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
         "Accept": "*/*",
         "Accept-Language": "en-US,en;q=0.9",
         "Referer": "https://www.instagram.com/",
         "X-Requested-With": "XMLHttpRequest",
         "X-IG-App-ID": "936619743392459",
-        "Cookie": f"sessionid={ig_account['sessionid']}; csrftoken={ig_account['csrftoken']};"
+        "Cookie": (
+            f"sessionid={sessionid}; "
+            f"csrftoken={csrftoken};"
+        )
     }
 
 async def get_latest_posts(username, ig_account, proxy=None):

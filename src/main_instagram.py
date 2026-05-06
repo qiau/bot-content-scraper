@@ -64,9 +64,8 @@ async def main():
 
     cache = load_cache("instagram")
     TARGETS = load_targets()
-    config = load_config()
-
-    IG_ACCOUNTS = config.get("instagram_accounts", [])
+    IG_ACCOUNTS = load_config()
+  
     if not IG_ACCOUNTS:
         raise ValueError("❌ Tidak ada IG account")
 
