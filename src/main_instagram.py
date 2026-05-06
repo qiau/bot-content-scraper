@@ -10,7 +10,6 @@ from src.handlers.telegram_handler import (
     close_telegram, _send_message
 )
 from src.handlers.instagram_handler import process_instagram
-from src.services.proxy_service import load_proxies, get_proxies  
 from src.utils.storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
 from src.utils.runtime import set_ig_mode, is_ig_running
@@ -36,28 +35,10 @@ async def main():
         print("⛔ IG mode STOP (skip run)")
         return
     
-    delay = random.randint(0, 36) 
+    delay = random.randint(0, 3600) 
     await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
-
-    try:
-        await load_proxies("ig")
-    except Exception as e:
-        msg = f"🚨 Gagal ambil proxy IG\nError: {e}"
-        print(msg)
-        await _send_message(msg)
-        await close_telegram()
-        return
-
-    PROXIES = get_proxies("ig")
-
-    if not PROXIES:
-        msg = "🚨 Proxy IG kosong / gagal di-load dari Webshare"
-        print(msg)
-        await _send_message(msg)
-        await close_telegram()
-        return
     
     asyncio.create_task(telegram_worker())
 
@@ -67,12 +48,6 @@ async def main():
   
     if not IG_ACCOUNTS:
         raise ValueError("❌ Tidak ada IG account")
-
-    # random.shuffle(PROXIES)
-
-    account_proxy_map = {
-        i: PROXIES[i % len(PROXIES)] for i in range(len(IG_ACCOUNTS))
-    }
 
     chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
 
@@ -84,10 +59,8 @@ async def main():
             break
 
         ig_account = IG_ACCOUNTS[i]
-        proxy = account_proxy_map[i]
 
         print(f"🚀 {ig_account['name']} mulai ({len(chunk)} target)")
-        print(f"🌐 Proxy: {proxy}")
         
         fail_count = 0
         counter = 0
@@ -102,7 +75,7 @@ async def main():
                 accounts,
                 cache,
                 ig_account,
-                proxy=proxy
+                proxy=None
             )
 
             if result == "proxy_error":
@@ -121,7 +94,6 @@ async def main():
             if fail_count >= 2:
                 msg = (
                     f"🚨 {ig_account['name']} ERROR\n"
-                    f"Proxy: {proxy}\n"
                     "Proxy ditandai sebagai mati atau IG Error"
                 )
                 await send_message(msg)
