@@ -34,7 +34,11 @@ async def get_latest_posts(username, ig_account, proxy=None):
         print(f"[IG] {username} ❌ header error:", e)
         return "ig_error"
     
-    timeout = aiohttp.ClientTimeout(total=15)
+    timeout = aiohttp.ClientTimeout(
+        total=30,
+        connect=10,
+        sock_read=20
+    )
 
     try:
         async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
