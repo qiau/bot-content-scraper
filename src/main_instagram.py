@@ -36,7 +36,7 @@ async def main():
         print("⛔ IG mode STOP (skip run)")
         return
     
-    delay = random.randint(0, 3600) 
+    delay = random.randint(0, 36) 
     await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
@@ -68,7 +68,7 @@ async def main():
     if not IG_ACCOUNTS:
         raise ValueError("❌ Tidak ada IG account")
 
-    random.shuffle(PROXIES)
+    # random.shuffle(PROXIES)
 
     account_proxy_map = {
         i: PROXIES[i % len(PROXIES)] for i in range(len(IG_ACCOUNTS))
