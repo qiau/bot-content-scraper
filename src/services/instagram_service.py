@@ -100,8 +100,11 @@ async def get_latest_posts(username, ig_account, proxy=None):
                         f"[IG] {username} ❌ feed status {res.status}"
                     )
 
-                    if res.status in [429, 502, 503, 504]:
+                    if res.status == 429:
                         return "proxy_error"
+
+                    if res.status in [502, 503, 504]:
+                        return "ig_error"
 
                     return "ig_error"
 
@@ -201,7 +204,6 @@ async def get_latest_posts(username, ig_account, proxy=None):
 
     except (
         aiohttp.ClientProxyConnectionError,
-        aiohttp.ClientConnectorError,
         asyncio.TimeoutError
     ) as e:
 
