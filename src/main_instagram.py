@@ -12,7 +12,7 @@ from src.handlers.telegram_handler import (
 from src.handlers.instagram_handler import process_instagram
 from src.utils.storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
-from src.utils.runtime import set_ig_mode, is_ig_running
+from src.utils.runtime import set_mode, is_running
 
 load_dotenv()
 
@@ -31,7 +31,7 @@ def chunk_targets(targets, n):
 
 async def main():
 
-    if not is_ig_running():
+    if not is_running("ig"):
         print("⛔ IG mode STOP (skip run)")
         return
     
@@ -54,7 +54,7 @@ async def main():
     should_stop_after_run = False
 
     for i, chunk in enumerate(chunks):
-        if not is_ig_running():
+        if not is_running("ig"):
             print("⛔ Dihentikan sebelum mulai akun")
             break
 
@@ -66,7 +66,7 @@ async def main():
         counter = 0
 
         for name, accounts in chunk:
-            if not is_ig_running():
+            if not is_running("ig"):
                 print("⛔ Dihentikan oleh Telegram")
                 break
 
@@ -119,7 +119,7 @@ async def main():
 
     if should_stop_after_run:
         await send_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
-        set_ig_mode("stopped")
+        set_mode("ig","stopped")
 
     await telegram_queue.join()
     await close_telegram()

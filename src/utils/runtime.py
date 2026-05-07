@@ -1,16 +1,32 @@
 import os
 
-IG_MODE_FILE = "data/runtime/ig_mode.txt"
+RUNTIME_DIR = "data/runtime"
 
-def is_ig_running():
+
+def get_mode_file(platform):
+    return os.path.join(
+        RUNTIME_DIR,
+        f"{platform}_mode.txt"
+    )
+
+
+def is_running(platform):
+
+    mode_file = get_mode_file(platform)
+
     try:
-        with open(IG_MODE_FILE, "r") as f:
+        with open(mode_file, "r") as f:
             return f.read().strip() == "running"
+
     except:
         return True
 
-def set_ig_mode(mode: str):
-    os.makedirs(os.path.dirname(IG_MODE_FILE), exist_ok=True)
 
-    with open(IG_MODE_FILE, "w") as f:
+def set_mode(platform, mode):
+
+    os.makedirs(RUNTIME_DIR, exist_ok=True)
+
+    mode_file = get_mode_file(platform)
+
+    with open(mode_file, "w") as f:
         f.write(mode)
