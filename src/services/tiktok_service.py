@@ -16,7 +16,7 @@ async def get_latest_tiktoks(username, limit=3):
             "quiet": True,
             "extract_flat": True,
             "skip_download": True,
-            "playlistend": limit,  # 🔥 langsung limit di yt_dlp
+            "playlistend": limit,
         }
 
         try:
@@ -25,11 +25,20 @@ async def get_latest_tiktoks(username, limit=3):
 
                 videos = []
 
-                if "entries" in info:
-                    for entry in info["entries"]:
-                        video_id = entry.get("id")
-                        if video_id:
-                            videos.append(video_id)
+                entries = info.get("entries") or []
+
+                entries.sort(
+                    key=lambda x: int(x.get("id", 0)),
+                    reverse=True
+                )
+
+                videos = []
+
+                for entry in entries[:limit]:
+                    video_id = entry.get("id")
+
+                    if video_id:
+                        videos.append(video_id)
 
                 return videos
 
