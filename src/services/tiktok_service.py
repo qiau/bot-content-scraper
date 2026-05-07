@@ -9,7 +9,7 @@ import aiohttp
 async def get_latest_tiktoks(username, limit=3):
     url = f"https://www.tiktok.com/@{username}"
 
-    loop = asyncio.get_running_loop()  # 🔥 lebih modern
+    loop = asyncio.get_running_loop()
 
     def run_yt_dlp():
         ydl_opts = {
@@ -70,14 +70,12 @@ async def get_tiktok_video_url(tiktok_url):
 
                 d = data["data"]
 
-                # 🟡 PHOTO MODE
                 if d.get("images"):
                     return {
                         "type": "image",
                         "data": d["images"]
                     }
 
-                # 🔵 VIDEO (PAKAI PLAY SAJA)
                 if d.get("play"):
                     return {
                         "type": "video",
