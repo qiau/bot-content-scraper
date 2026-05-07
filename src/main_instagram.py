@@ -5,9 +5,9 @@ import os
 from dotenv import load_dotenv
 
 from src.handlers.telegram_handler import (
-    send_message,
+    _send_admin_message,
     init_telegram,
-    close_telegram, _send_message
+    close_telegram
 )
 from src.handlers.instagram_handler import process_instagram
 from src.utils.storage import load_cache, save_cache
@@ -96,7 +96,7 @@ async def main():
                     f"🚨 {ig_account['name']} ERROR\n"
                     "Proxy ditandai sebagai mati atau IG Error"
                 )
-                await send_message(msg)
+                await _send_admin_message(msg)
                 should_stop_after_run = True
                 break
 
@@ -118,7 +118,7 @@ async def main():
     save_cache(cache, "instagram")
 
     if should_stop_after_run:
-        await send_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
+        await _send_admin_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
         set_mode("ig","stopped")
 
     await telegram_queue.join()
