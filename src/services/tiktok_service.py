@@ -9,14 +9,14 @@ import aiohttp
 async def get_latest_tiktoks(username, limit=3):
     url = f"https://www.tiktok.com/@{username}"
 
-    loop = asyncio.get_running_loop()  # 🔥 lebih modern
+    loop = asyncio.get_running_loop()
 
     def run_yt_dlp():
         ydl_opts = {
             "quiet": True,
             "extract_flat": True,
             "skip_download": True,
-            "playlistend": limit,  # 🔥 langsung limit di yt_dlp
+            "playlistend": limit,
         }
 
         try:
@@ -25,11 +25,20 @@ async def get_latest_tiktoks(username, limit=3):
 
                 videos = []
 
-                if "entries" in info:
-                    for entry in info["entries"]:
-                        video_id = entry.get("id")
-                        if video_id:
-                            videos.append(video_id)
+                entries = info.get("entries") or []
+
+                entries.sort(
+                    key=lambda x: int(x.get("id", 0)),
+                    reverse=True
+                )
+
+                videos = []
+
+                for entry in entries[:limit]:
+                    video_id = entry.get("id")
+
+                    if video_id:
+                        videos.append(video_id)
 
                 return videos
 
@@ -61,14 +70,12 @@ async def get_tiktok_video_url(tiktok_url):
 
                 d = data["data"]
 
-                # 🟡 PHOTO MODE
                 if d.get("images"):
                     return {
                         "type": "image",
                         "data": d["images"]
                     }
 
-                # 🔵 VIDEO (PAKAI PLAY SAJA)
                 if d.get("play"):
                     return {
                         "type": "video",
