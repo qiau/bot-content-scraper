@@ -9,7 +9,8 @@ load_dotenv()
 
 session = None
 TOKEN = None
-CHAT_ID = os.getenv("CHAT_ID")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
+ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
 # =========================
@@ -32,12 +33,23 @@ def is_admin(user_id: int):
 # =========================
 # 🔵 INTERNAL (REAL SENDER)
 # =========================
+async def _send_admin_message(text):
+
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage" 
+
+    payload = {
+        "chat_id": ADMIN_CHAT_ID,
+        "text": text
+    }
+
+    async with session.post(url, data=payload):
+        pass
 
 async def _send_message(text):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
     payload = {
-        "chat_id": CHAT_ID,
+        "chat_id": CHANNEL_ID,
         "text": text
     }
 
@@ -48,7 +60,7 @@ async def _send_photo(photo_url, caption=None):
     url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
 
     payload = {
-        "chat_id": CHAT_ID,
+        "chat_id": CHANNEL_ID,
         "photo": photo_url,
         "caption": caption or ""
     }
@@ -60,7 +72,7 @@ async def _send_video(video_url, caption=None):
     url = f"https://api.telegram.org/bot{TOKEN}/sendVideo"
 
     payload = {
-        "chat_id": CHAT_ID,
+        "chat_id": CHANNEL_ID,
         "video": video_url,
         "caption": caption or ""
     }
@@ -80,7 +92,7 @@ async def _send_media_group(media_group):
                 item.pop("caption", None)
 
         payload = {
-            "chat_id": CHAT_ID,
+            "chat_id": CHANNEL_ID,
             "media": json.dumps(chunk)
         }
 
@@ -93,6 +105,9 @@ async def _send_media_group(media_group):
 # =========================
 # 🔵 PUBLIC (QUEUE WRAPPER)
 # =========================
+
+async def send_admin_message(text):
+    await enqueue(_send_admin_message, text)
 
 async def send_message(text):
     await enqueue(_send_message, text)

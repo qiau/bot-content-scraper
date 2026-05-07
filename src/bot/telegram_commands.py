@@ -1,5 +1,5 @@
 from src.handlers.telegram_handler import (
-    _send_message,
+    _send_admin_message,
     is_admin
 )
 from src.utils.runtime import set_mode, is_running
@@ -19,7 +19,7 @@ async def handle_update(update):
         return
 
     if cmd == "/start":
-        await _send_message(
+        await _send_admin_message(
             "🤖 Bot siap\n\n"
 
             "/start_ig\n"
@@ -50,7 +50,7 @@ async def handle_update(update):
 
         set_mode(platform, "running")
 
-        await _send_message(
+        await _send_admin_message(
             f"🟢 {platform.upper()} diaktifkan"
         )
 
@@ -63,7 +63,7 @@ async def handle_update(update):
 
         set_mode(platform, "stopped")
 
-        await _send_message(
+        await _send_admin_message(
             f"🔴 {platform.upper()} dihentikan"
         )
 
@@ -77,7 +77,7 @@ async def handle_update(update):
             else "🔴 STOPPED"
         )
 
-        await _send_message(
+        await _send_admin_message(
             f"{platform.upper()} Status:\n{status}"
         )   
 
@@ -85,7 +85,7 @@ async def handle_update(update):
         parts = text.split()
 
         if len(parts) != 4:
-            await _send_message(
+            await _send_admin_message(
                 "❌ Format salah\nContoh:\n/set_ig acc1 sessionid csrftoken"
             )
             return
@@ -95,22 +95,22 @@ async def handle_update(update):
         ok = update_account_config(name, sessionid, csrftoken)
 
         if ok:
-            await _send_message(f"✅ {name} berhasil diupdate")
+            await _send_admin_message(f"✅ {name} berhasil diupdate")
         else:
-            await _send_message(f"❌ Akun {name} tidak ditemukan")
+            await _send_admin_message(f"❌ Akun {name} tidak ditemukan")
 
     elif cmd.startswith("/get_ig"):
         parts = text.split()
 
         if len(parts) != 2:
-            await _send_message("❌ Format salah: /get_ig acc1")
+            await _send_admin_message("❌ Format salah: /get_ig acc1")
             return
 
         name = parts[1]
         acc = get_account_config(name)
 
         if not acc:
-            await _send_message("❌ Akun tidak ditemukan")
+            await _send_admin_message("❌ Akun tidak ditemukan")
             return
 
         msg = (
@@ -119,7 +119,7 @@ async def handle_update(update):
             f"csrftoken: {acc['csrftoken'][:6]}..."
         )
 
-        await _send_message(msg)
+        await _send_admin_message(msg)
     
     elif cmd.startswith("/add_target"):
 
@@ -127,7 +127,7 @@ async def handle_update(update):
 
         if len(parts) != 4:
 
-            await _send_message(
+            await _send_admin_message(
                 "Format:\n"
                 "/add_target Nama platform username"
             )
@@ -142,7 +142,7 @@ async def handle_update(update):
             username
         )
 
-        await _send_message(
+        await _send_admin_message(
             f"✅ Target ditambahkan\n\n"
             f"{name}\n"
             f"{platform}: {username}"
@@ -154,7 +154,7 @@ async def handle_update(update):
 
         if len(parts) != 4:
 
-            await _send_message(
+            await _send_admin_message(
                 "Format:\n"
                 "/set_target Nama platform username_baru"
             )
@@ -170,13 +170,13 @@ async def handle_update(update):
         )
 
         if ok:
-            await _send_message(
+            await _send_admin_message(
                 f"✅ Target diupdate\n\n"
                 f"{name}\n"
                 f"{platform}: {username}"
             )
 
         else:
-            await _send_message(
+            await _send_admin_message(
                 "❌ Member tidak ditemukan"
             )

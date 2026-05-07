@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from src.handlers.telegram_handler import (
     init_telegram,
     close_telegram,
-    _send_message
+    _send_admin_message
 )
 from src.handlers.x_handler import process_x
 from src.services.proxy_service import load_proxies 
@@ -42,7 +42,7 @@ async def main():
 
         print(msg)
 
-        await _send_message(msg)
+        await _send_admin_message(msg)
 
         await close_telegram()
 
