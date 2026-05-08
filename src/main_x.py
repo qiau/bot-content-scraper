@@ -31,12 +31,12 @@ async def main():
     await init_telegram(os.getenv("TELEGRAM_TOKEN_SOCIAL"))
 
     try:
-        await load_proxies("x")
+        await load_proxies()
 
     except Exception as e:
 
         msg = (
-            f"🚨 Gagal load proxy X\n"
+            f"🚨 Gagal load proxy\n"
             f"Error: {e}"
         )
 
