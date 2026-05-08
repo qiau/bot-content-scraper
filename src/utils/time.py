@@ -1,7 +1,6 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-
 DAYS = {
     0: "Senin",
     1: "Selasa",
