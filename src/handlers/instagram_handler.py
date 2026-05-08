@@ -29,7 +29,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     new_ids = []
 
     for post in posts:
-        post_id = post.get["shortcode"]
+        post_id = post.get("shortcode")
 
         if not post_id:
             continue
