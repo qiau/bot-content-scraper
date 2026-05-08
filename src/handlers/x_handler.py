@@ -28,12 +28,16 @@ async def process_x(name, accounts, cache, semaphore):
             return
 
         user_cache = cache.get(x_user,[])
+        latest_cached_id = max(
+            map(int, user_cache),
+            default=0
+        )
         new_ids = []
 
         for post in posts:
             tweet_id = post["id"]
 
-            if tweet_id in user_cache:
+            if int(tweet_id) <= latest_cached_id:
                 continue
 
             tweet_url = post["url"]

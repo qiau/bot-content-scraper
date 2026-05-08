@@ -31,10 +31,15 @@ async def process_tiktok(name, accounts, cache, semaphore):
             return
 
         user_cache = cache.get(tiktok_user,[])
+        latest_cached_id = max(
+            map(int, user_cache),
+            default=0
+        )
         new_ids = []
 
         for vid in videos:
-            if vid in user_cache:
+            # skip video lama
+            if int(vid) <= latest_cached_id:
                 continue
 
             link = f"https://www.tiktok.com/@{tiktok_user}/video/{vid}"
