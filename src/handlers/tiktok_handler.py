@@ -46,14 +46,14 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 result = None
 
             caption = format_tiktok_caption(
-                name,
+                name, tiktok_user,
                 link,
                 result.get("create_time")
             )
 
             try:
                 if result and result.get("type") == "video":
-                    await send_video(result["data"], caption=caption)
+                    await send_video(result["data"], caption=caption, parse_mode="HTML")
 
                 elif result and result.get("type") == "image":
                     images = result["data"]
@@ -68,13 +68,14 @@ async def process_tiktok(name, accounts, cache, semaphore):
 
                         if i == 0:
                             item["caption"] = caption
+                            item["parse_mode"] = "HTML"
 
                         media_group.append(item)
 
                     await send_media_group(media_group)
 
                 else:
-                    await send_message(caption)
+                    await send_message(caption, parse_mode="HTML")
 
                 new_ids.append(vid)
 

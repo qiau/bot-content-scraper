@@ -1,8 +1,9 @@
+from html import escape
 from src.utils.time import format_wib_time
 
-
 def format_instagram_caption(
-    name,
+    name, 
+    username,
     link,
     timestamp=None
 ):
@@ -12,14 +13,17 @@ def format_instagram_caption(
     )
 
     return (
-        f"📸 <b>{name}</b>\n\n"
+        f"📸 <b>{escape(name)}</b>\n"
+        f"👤 {escape(username)}\n\n"
         f"🕒 {date_text}\n\n"
-        f'<a href="{link}">Instagram</a>'
+        f'🔗 <a href="{link}">'
+        f'Lihat postingan</a>'
     )
 
 
 def format_tiktok_caption(
-    name,
+    name, 
+    username,
     link,
     timestamp=None
 ):
@@ -29,13 +33,16 @@ def format_tiktok_caption(
     )
 
     return (
-        f"🎵 <b>{name}</b>\n\n"
+        f"🎵 <b>{escape(name)}</b>\n"
+        f"👤 {escape(username)}\n\n"
         f"🕒 {date_text}\n\n"
-        f'<a href="{link}">TikTok</a>'
+        f'🔗 <a href="{link}">'
+        f'Lihat postingan</a>'
     )
 
 def format_x_caption(
-    name,
+    name, 
+    username,
     link,
     timestamp=None
 ):
@@ -45,7 +52,9 @@ def format_x_caption(
     )
 
     return (
-        f"🐦 <b>{name}</b>\n\n"
+        f"🐦 <b>{escape(name)}</b>\n"
+        f"👤 {escape(username)}\n\n"
         f"🕒 {date_text}\n\n"
-        f'<a href="{link}">X</a>'
+        f'🔗 <a href="{link}">'
+        f'Lihat postingan</a>'
     )
