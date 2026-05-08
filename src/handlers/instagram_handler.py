@@ -43,7 +43,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
         link = f"https://www.instagram.com/p/{post_id}/"
         
         caption = format_instagram_caption(
-            name,
+            name, instagram_user,
             link,
             post.get("taken_at")
         )

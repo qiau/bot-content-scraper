@@ -41,7 +41,7 @@ async def process_x(name, accounts, cache, semaphore):
             has_video = post["has_video"]
 
             caption = format_x_caption(
-                name,
+                name, x_user,
                 tweet_url,
                 post.get("timestamp")
             )
