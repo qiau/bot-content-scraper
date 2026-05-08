@@ -13,9 +13,9 @@ def format_instagram_caption(
     )
 
     return (
-        f"📸 <b>Instagram Update</b>\n\n"
-        f"{escape(name)}\n"
-        f"👤 {escape(username)}\n\n"
+        f"📸 <b>Instagram Update • "
+        f"{escape(name)}</b>\n\n"
+        f"👤 {escape(username)}\n"
         f"🕒 {date_text}\n\n"
         f'🔗 <a href="{link}">'
         f'Lihat postingan</a>'
@@ -34,9 +34,9 @@ def format_tiktok_caption(
     )
 
     return (
-        f"🎵 <b>TikTok Update</b>\n\n"
-        f"{escape(name)}\n"
-        f"👤 {escape(username)}\n\n"
+        f"🎵 <b>TikTok Update • "
+        f"{escape(name)}</b>\n\n"
+        f"👤 {escape(username)}\n"
         f"🕒 {date_text}\n\n"
         f'🔗 <a href="{link}">'
         f'Lihat postingan</a>'
@@ -54,9 +54,9 @@ def format_x_caption(
     )
 
     return (
-        f"🐦 <b>X Update</b>\n\n"
-        f"{escape(name)}\n"
-        f"👤 {escape(username)}\n\n"
+        f"🐦 <b>X Update • "
+        f"{escape(name)}</b>\n\n"
+        f"👤 {escape(username)}\n"
         f"🕒 {date_text}\n\n"
         f'🔗 <a href="{link}">'
         f'Lihat postingan</a>'
