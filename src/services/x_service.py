@@ -67,20 +67,11 @@ async def get_latest_tweets(username, limit=3):
                     )
 
                     timestamp = None
+                    
                     if pub_match:
-
                         try:
-
-                            dt = (
-                                parsedate_to_datetime(
-                                    pub_match.group(1)
-                                )
-                            )
-
-                            timestamp = int(
-                                dt.timestamp()
-                            )
-
+                            dt = (parsedate_to_datetime(pub_match.group(1)))
+                            timestamp = int(dt.timestamp())
                         except Exception:
                             pass
 
