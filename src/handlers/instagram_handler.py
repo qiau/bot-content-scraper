@@ -3,6 +3,7 @@ from src.handlers.telegram_handler import (
     send_photo, send_video, send_media_group, send_message
 )
 from src.utils.storage import update_cache
+from src.utils.caption import format_instagram_caption
 
 async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     instagram_user = accounts.get("instagram")
@@ -41,9 +42,10 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
 
         link = f"https://www.instagram.com/p/{post_id}/"
         
-        caption = (
-            f"📸 {name} ({instagram_user})\n"
-            f"{link}"
+        caption = format_instagram_caption(
+            name,
+            link,
+            post.get("taken_at")
         )
 
         media_group = []
@@ -56,6 +58,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
 
             if i == 0:
                 media_item["caption"] = caption
+                media_item["parse_mode"] = "HTML"
 
             media_group.append(media_item)
 
@@ -64,9 +67,9 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
                 m = media_group[0]
 
                 if m["type"] == "photo":
-                    await send_photo(m["media"], caption=m.get("caption"))
+                    await send_photo(m["media"], caption=m.get("caption"), parse_mode="HTML")
                 else:
-                    await send_video(m["media"], caption=m.get("caption"))
+                    await send_video(m["media"], caption=m.get("caption"), parse_mode="HTML")
 
             else:
                 await send_media_group(media_group)
@@ -80,7 +83,7 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
                 "⚠️ Media gagal dimuat, lihat langsung di Instagram"
             )
 
-            await send_message(fallback_caption)
+            await send_message(fallback_caption, parse_mode="HTML")
             new_ids.append(post_id)
 
     if new_ids:

@@ -9,6 +9,7 @@ from src.handlers.telegram_handler import (
     send_message, send_video, send_media_group
 )
 from src.utils.storage import update_cache
+from src.utils.caption import format_tiktok_caption
 
 async def process_tiktok(name, accounts, cache, semaphore):
     tiktok_user = accounts.get("tiktok")
@@ -44,7 +45,11 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 print(f"{tiktok_user}: downloader error {e}")
                 result = None
 
-            caption = f"🎵 {name} ({tiktok_user})\n{link}"
+            caption = format_tiktok_caption(
+                name,
+                link,
+                result.get("create_time")
+            )
 
             try:
                 if result and result.get("type") == "video":

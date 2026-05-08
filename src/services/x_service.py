@@ -3,6 +3,10 @@ import re
 import random
 import asyncio
 
+from email.utils import (
+    parsedate_to_datetime
+)
+
 from src.utils.fetch_utils import fetch
 from src.utils.parser_utils import parse_media
 
@@ -57,6 +61,28 @@ async def get_latest_tweets(username, limit=3):
                     link = match.group(1)
                     tweet_id = link.split("/")[-1].replace("#m", "")
                     tweet_url = f"https://x.com/{username}/status/{tweet_id}"
+                    pub_match = re.search(
+                        r"<pubDate>(.*?)</pubDate>",
+                        item
+                    )
+
+                    timestamp = None
+                    if pub_match:
+
+                        try:
+
+                            dt = (
+                                parsedate_to_datetime(
+                                    pub_match.group(1)
+                                )
+                            )
+
+                            timestamp = int(
+                                dt.timestamp()
+                            )
+
+                        except Exception:
+                            pass
 
                     # 🔥 4. parse media
                     images, has_video = parse_media(item)
@@ -69,7 +95,8 @@ async def get_latest_tweets(username, limit=3):
                         "id": tweet_id,
                         "url": tweet_url,
                         "images": images,
-                        "has_video": has_video
+                        "has_video": has_video,
+                        "timestamp": timestamp
                     })
 
                     if len(results) >= limit:

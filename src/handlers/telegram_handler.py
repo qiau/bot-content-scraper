@@ -22,42 +22,74 @@ async def init_telegram(token):
     session = aiohttp.ClientSession()
 
 async def close_telegram():
-    await session.close()
+    if session:
+        await session.close()
 
 # =========================
 # 🔒 AUTH (buat nanti command)
 # =========================
 def is_admin(user_id: int):
-    return str(user_id) == ADMIN_ID
+    return str(user_id) == str(ADMIN_ID)
+
+
+# =========================
+# 🔵 INTERNAL SEND
+# =========================
+async def _post(method, payload):
+
+    url = (
+        f"https://api.telegram.org/"
+        f"bot{TOKEN}/{method}"
+    )
+
+    async with session.post(
+        url,
+        data=payload
+    ) as res:
+
+        if res.status != 200:
+
+            text = await res.text()
+
+            print(
+                f"❌ Telegram {method} error:",
+                text
+            )
 
 # =========================
 # 🔵 INTERNAL (REAL SENDER)
 # =========================
-async def _send_admin_message(text):
-
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage" 
+async def _send_admin_message(text, parse_mode=None):
 
     payload = {
         "chat_id": ADMIN_CHAT_ID,
         "text": text
     }
 
-    async with session.post(url, data=payload):
-        pass
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
 
-async def _send_message(text):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    await _post(
+        "sendMessage",
+        payload
+    )
+
+async def _send_message(text, parse_mode=None):
 
     payload = {
         "chat_id": CHANNEL_ID,
         "text": text
     }
 
-    async with session.post(url, data=payload):
-        pass
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
 
-async def _send_photo(photo_url, caption=None):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+    await _post(
+        "sendMessage",
+        payload
+    )
+
+async def _send_photo(photo_url, caption=None, parse_mode=None):
 
     payload = {
         "chat_id": CHANNEL_ID,
@@ -65,11 +97,15 @@ async def _send_photo(photo_url, caption=None):
         "caption": caption or ""
     }
 
-    async with session.post(url, data=payload):
-        pass
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
 
-async def _send_video(video_url, caption=None):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendVideo"
+    await _post(
+        "sendPhoto",
+        payload
+    )
+
+async def _send_video(video_url, caption=None, parse_mode=None):
 
     payload = {
         "chat_id": CHANNEL_ID,
@@ -77,14 +113,19 @@ async def _send_video(video_url, caption=None):
         "caption": caption or ""
     }
 
-    async with session.post(url, data=payload):
-        pass
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
+
+    await _post(
+        "sendVideo",
+        payload
+    )
 
 async def _send_media_group(media_group):
     MAX_MEDIA = 10
 
     for i in range(0, len(media_group), MAX_MEDIA):
-        chunk = media_group[i:i+MAX_MEDIA]
+        chunk = media_group[i:i + MAX_MEDIA]
 
         # caption hanya di album pertama
         if i != 0:
@@ -96,27 +137,26 @@ async def _send_media_group(media_group):
             "media": json.dumps(chunk)
         }
 
-        async with session.post(
-            f"https://api.telegram.org/bot{TOKEN}/sendMediaGroup",
-            data=payload
-        ):
-            pass
+        await _post(
+            "sendMediaGroup",
+            payload
+        )
 
 # =========================
 # 🔵 PUBLIC (QUEUE WRAPPER)
 # =========================
 
-async def send_admin_message(text):
-    await enqueue(_send_admin_message, text)
+async def send_admin_message(text, parse_mode=None):
+    await enqueue(_send_admin_message, text, parse_mode)
 
-async def send_message(text):
-    await enqueue(_send_message, text)
+async def send_message(text, parse_mode=None):
+    await enqueue(_send_message, text, parse_mode)
 
-async def send_photo(photo_url, caption=None):
-    await enqueue(_send_photo, photo_url, caption)
+async def send_photo(photo_url, caption=None, parse_mode=None):
+    await enqueue(_send_photo, photo_url, caption, parse_mode)
 
-async def send_video(video_url, caption=None):
-    await enqueue(_send_video, video_url, caption)
+async def send_video(video_url, caption=None, parse_mode=None):
+    await enqueue(_send_video, video_url, caption, parse_mode)
 
 async def send_media_group(media_group):
     await enqueue(_send_media_group, media_group)

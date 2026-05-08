@@ -7,6 +7,7 @@ from src.handlers.telegram_handler import (
 )
 from src.utils.storage import update_cache
 from src.utils.x_video_downloader import extract_media_urls
+from src.utils.caption import format_x_caption
 
 async def process_x(name, accounts, cache, semaphore):
     x_user = accounts.get("x")
@@ -39,7 +40,11 @@ async def process_x(name, accounts, cache, semaphore):
             images = post["images"]
             has_video = post["has_video"]
 
-            caption = f"🐦 {name} ({x_user})\n{tweet_url}"
+            caption = format_x_caption(
+                name,
+                tweet_url,
+                post.get("timestamp")
+            )
 
             media_group = []
 
@@ -51,6 +56,7 @@ async def process_x(name, accounts, cache, semaphore):
 
                 if not media_group:
                     item["caption"] = caption
+                    item["parse_mode"] = "HTML"
 
                 media_group.append(item)
 
@@ -58,8 +64,16 @@ async def process_x(name, accounts, cache, semaphore):
                 videos, video_error, failed_count = extract_media_urls(tweet_url)
 
                 if video_error and not videos:
-                    msg = f"{caption}\n\n⚠️ {failed_count} video gagal didownload"
-                    await send_message(msg)
+                    msg = (
+                        f"{caption}\n\n"
+                        f"⚠️ {failed_count} "
+                        f"video gagal didownload"
+                    )
+
+                    await send_message(
+                        msg,
+                        parse_mode="HTML"
+                    )
 
                     new_ids.append(tweet_id)
                     continue
@@ -74,9 +88,14 @@ async def process_x(name, accounts, cache, semaphore):
                         extra = ""
                         
                         if video_error:
-                            extra = f"\n\n⚠️ {failed_count} video gagal didownload"
+                            extra = (
+                                f"\n\n⚠️ "
+                                f"{failed_count} "
+                                f"video gagal didownload"
+                            )
 
                         item["caption"] = caption + extra
+                        item["parse_mode"] = "HTML"
 
                     media_group.append(item)
 
@@ -88,9 +107,9 @@ async def process_x(name, accounts, cache, semaphore):
                     m = media_group[0]
 
                     if m["type"] == "photo":
-                        await send_photo(m["media"], caption=m.get("caption"))
+                        await send_photo(m["media"], caption=m.get("caption"), parse_mode="HTML")
                     else:
-                        await send_video(m["media"], caption=m.get("caption"))
+                        await send_video(m["media"], caption=m.get("caption"), parse_mode="HTML")
 
                 else:
                     await send_media_group(media_group)
