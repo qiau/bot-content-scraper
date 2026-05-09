@@ -37,7 +37,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
         )
         new_ids = []
 
-        for vid in videos:
+        for vid in reversed(videos):
             # skip video lama
             if int(vid) <= latest_cached_id:
                 continue

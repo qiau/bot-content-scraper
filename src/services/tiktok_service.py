@@ -23,14 +23,7 @@ async def get_latest_tiktoks(username, limit=3):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
 
-                videos = []
-
                 entries = info.get("entries") or []
-
-                entries.sort(
-                    key=lambda x: int(x.get("id", 0)),
-                    reverse=True
-                )
 
                 videos = []
 

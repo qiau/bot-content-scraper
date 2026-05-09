@@ -34,7 +34,7 @@ async def process_x(name, accounts, cache, semaphore):
         )
         new_ids = []
 
-        for post in posts:
+        for post in reversed(posts):
             tweet_id = post["id"]
 
             if int(tweet_id) <= latest_cached_id:
