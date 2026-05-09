@@ -5,6 +5,10 @@
     "tiktok": "jkt48.official",
     "birth_date": "2011-12-17"
   },
+  "Jkt48 U16": {
+    "instagram": "jkt48.u16",
+    "tiktok": "jkt48.u16"
+  },
   "Shani": {
     "x": "_shanindira",
     "instagram": "_shanindira",
@@ -334,5 +338,38 @@
     "instagram": "intan.jkt48",
     "tiktok": "jkt48.intan",
     "birth_date": "2006-02-24"
+  },
+  "Fera": {
+    "birth_date": "2012-10-20"
+  },
+  "Carissa": {
+    "birth_date": "2012-02-02"
+  },
+  "Bella": {
+    "birth_date": "2011-03-02"
+  },
+  "Fahira": {
+    "birth_date": "2012-08-13"
+  },
+  "Rara": {
+    "birth_date": "2010-08-30"
+  },
+  "Heidi": {
+    "x": "Heidi_JKT48",
+    "instagram": "heidi.jkt48",
+    "tiktok": "jkt48.heidi__",
+    "birth_date": "2008-08-27"
+  },
+  "Maxine": {
+    "birth_date": "2011-12-02"
+  },
+  "Jazzy": {
+    "birth_date": "2011-03-12"
+  },
+  "Ralyne": {
+    "birth_date": "2011-10-15"
+  },
+  "Sona": {
+    "birth_date": "2011-12-01"
   }
 }
