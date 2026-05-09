@@ -7,18 +7,15 @@ load_dotenv()
 
 PROXY_APIS = [
     os.getenv("PROXY_1"),
-    os.getenv("PROXY_2"),
+   # os.getenv("PROXY_2"),
 ]
 
 PROXIES = []
 
-
 async def load_proxies():
 
     global PROXIES
-
     all_proxies = []
-
     try:
 
         async with aiohttp.ClientSession() as session:

@@ -21,6 +21,9 @@ async def handle_update(update):
     if cmd == "/start":
         await _send_admin_message(
             "🤖 Bot siap\n\n"
+            
+            "/start_all\n"
+            "/stop_all\n\n"
 
             "/start_ig\n"
             "/stop_ig\n"
@@ -40,7 +43,79 @@ async def handle_update(update):
             "/add_target\n"
             "/set_target\n"
         )
-    
+
+    elif cmd == "/start_all":
+
+        platforms = [
+            "ig",
+            "x",
+            "tt"
+        ]
+
+        started = []
+
+        for platform in platforms:
+
+            if not is_running(platform):
+
+                set_mode(
+                    platform,
+                    "running"
+                )
+
+                started.append(
+                    platform.upper()
+                )
+
+        if started:
+
+            await _send_admin_message(
+                "🟢 Semua service diaktifkan\n\n"
+                + "\n".join(started)
+            )
+
+        else:
+
+            await _send_admin_message(
+                "⚠️ Semua service sudah berjalan"
+            )
+
+    elif cmd == "/stop_all":
+
+        platforms = [
+            "ig",
+            "x",
+            "tt"
+        ]
+
+        stopped = []
+
+        for platform in platforms:
+
+            if is_running(platform):
+
+                set_mode(
+                    platform,
+                    "stopped"
+                )
+
+                stopped.append(
+                    platform.upper()
+                )
+
+        if stopped:
+
+            await _send_admin_message(
+                "🔴 Semua service dihentikan\n\n"
+                + "\n".join(stopped)
+            )
+
+        else:
+
+            await _send_admin_message(
+                "⚠️ Semua service sudah berhenti"
+            )
+
     elif cmd.startswith("/start_"):
 
         platform = cmd.replace("/start_", "")
