@@ -86,3 +86,17 @@ def format_x_caption(
         f'🔗 <a href="{link}">'
         f"Lihat postingan</a>"
     )
+
+def format_birthday_caption(
+    name,
+    age
+):
+
+    return (
+        f"🎂 <b>Birthday Alert</b>\n\n"
+        f"🎉 Hari ini "
+        f"<b>{escape(name)}</b> "
+        f"berulang tahun yang ke-{age}!\n\n"
+        f"💖 Jangan lupa kirim doa "
+        f"dan ucapan terbaik kalian~"
+    )
