@@ -75,7 +75,10 @@ async def get_tiktok_video_url(tiktok_url):
                         "type": "image",
                         "data": d["images"],
                         "create_time": d.get("create_time"),
-                        "description": d.get("title")
+                        "description": (
+                            d.get("title", "")
+                            .strip()
+                        )
                     }
 
                 if d.get("play"):
@@ -83,7 +86,10 @@ async def get_tiktok_video_url(tiktok_url):
                         "type": "video",
                         "data": d["play"],
                         "create_time": d.get("create_time"),
-                        "description": d.get("title")
+                        "description": (
+                            d.get("title", "")
+                            .strip()
+                        )
                     }
 
     except Exception as e:
