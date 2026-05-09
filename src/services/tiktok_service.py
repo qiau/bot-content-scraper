@@ -74,14 +74,16 @@ async def get_tiktok_video_url(tiktok_url):
                     return {
                         "type": "image",
                         "data": d["images"],
-                        "create_time": d.get("create_time")
+                        "create_time": d.get("create_time"),
+                        "description": d.get("title")
                     }
 
                 if d.get("play"):
                     return {
                         "type": "video",
                         "data": d["play"],
-                        "create_time": d.get("create_time")
+                        "create_time": d.get("create_time"),
+                        "description": d.get("title")
                     }
 
     except Exception as e:
