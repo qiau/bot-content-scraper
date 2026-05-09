@@ -1,69 +1,59 @@
 import aiohttp
 import os
 
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
-PROXY_APIS = [
-    os.getenv("PROXY_1"),
-   # os.getenv("PROXY_2"),
-]
+PROXY_API = (
+    os.getenv("PROXY_2")
+    if datetime.now().day >= 15
+    else os.getenv("PROXY_1")
+)
 
 PROXIES = []
+
 
 async def load_proxies():
 
     global PROXIES
-    all_proxies = []
+
+    proxies = []
+
     try:
 
         async with aiohttp.ClientSession() as session:
 
-            for url in PROXY_APIS:
+            async with session.get(PROXY_API) as res:
 
-                if not url:
-                    continue
+                text = await res.text()
 
-                try:
+        for line in text.splitlines():
 
-                    async with session.get(url) as res:
-                        text = await res.text()
+            line = line.strip()
 
-                    for line in text.splitlines():
+            if not line:
+                continue
 
-                        if not line.strip():
-                            continue
+            try:
 
-                        try:
+                ip, port, user, password = (
+                    line.split(":")
+                )
 
-                            ip, port, user, password = (
-                                line.strip().split(":")
-                            )
+                proxies.append(
+                    f"http://{user}:{password}"
+                    f"@{ip}:{port}"
+                )
 
-                            proxy = (
-                                f"http://"
-                                f"{user}:{password}"
-                                f"@{ip}:{port}"
-                            )
+            except ValueError:
 
-                            all_proxies.append(
-                                proxy
-                            )
+                print(
+                    f"❌ Format salah: {line}"
+                )
 
-                        except:
-
-                            print(
-                                f"❌ Format salah: {line}"
-                            )
-
-                except Exception as e:
-
-                    print(
-                        f"❌ Gagal load {url}: {e}"
-                    )
-
-        PROXIES = all_proxies
+        PROXIES = proxies
 
         print(
             f"✅ Loaded "
