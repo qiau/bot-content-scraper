@@ -3,6 +3,7 @@ import re
 import random
 import asyncio
 
+from html import unescape
 from email.utils import (
     parsedate_to_datetime
 )
@@ -15,7 +16,12 @@ NITTER_INSTANCES = [
 ]
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+    "User-Agent": (
+        "Mozilla/5.0 "
+        "(Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 "
+        "Chrome/120 Safari/537.36"
+    )
 }
 
 async def get_latest_tweets(username, limit=3):
@@ -75,6 +81,24 @@ async def get_latest_tweets(username, limit=3):
                         except Exception:
                             pass
 
+                    # ambil text tweet
+                    title_match = re.search(
+                        r"<title>(.*?)</title>",
+                        item,
+                        re.S
+                    )
+
+                    tweet_text = ""
+
+                    if title_match:
+
+                        tweet_text = (
+                            unescape(
+                                title_match.group(1)
+                            )
+                            .strip()
+                        )
+
                     # 🔥 4. parse media
                     images, has_video = parse_media(item)
 
@@ -87,7 +111,8 @@ async def get_latest_tweets(username, limit=3):
                         "url": tweet_url,
                         "images": images,
                         "has_video": has_video,
-                        "timestamp": timestamp
+                        "timestamp": timestamp,
+                        "text": tweet_text
                     })
 
                     if len(results) >= limit:

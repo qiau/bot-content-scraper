@@ -53,7 +53,8 @@ async def process_tiktok(name, accounts, cache, semaphore):
             caption = format_tiktok_caption(
                 name, tiktok_user,
                 link,
-                result.get("create_time")
+                result.get("create_time"),
+                result.get("description")
             )
 
             try:

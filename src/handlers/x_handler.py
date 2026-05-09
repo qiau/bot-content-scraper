@@ -47,7 +47,8 @@ async def process_x(name, accounts, cache, semaphore):
             caption = format_x_caption(
                 name, x_user,
                 tweet_url,
-                post.get("timestamp")
+                post.get("timestamp"),
+                post.get("text")
             )
 
             media_group = []
