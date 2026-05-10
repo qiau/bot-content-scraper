@@ -1,13 +1,12 @@
 import yt_dlp
 
-def extract_media_urls(tweet_url, expected_count=1):
+def extract_media_urls(tweet_url, expected_count=1,  format_selector="b[ext=mp4]"):
     ydl_opts = {
         "quiet": True,
         "skip_download": True,
-        "format": "b[ext=mp4]",
+        "format": format_selector,
     }
 
-    
     videos = []
     video_error = False
     failed_count = 0

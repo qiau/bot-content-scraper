@@ -17,11 +17,31 @@ async def process_x(name, accounts, cache, semaphore):
     async with semaphore:
         await asyncio.sleep(random.uniform(2, 3))
 
-        try:
-            posts = await get_latest_tweets(x_user, limit=3)
-        except Exception as e:
-            print(f"{x_user}: error {e}")
-            return
+        posts = []
+
+        for attempt in range(2):
+
+            try:
+
+                posts = await get_latest_tweets(
+                    x_user,
+                    limit=3
+                )
+
+                if posts:
+                    break
+
+            except Exception as e:
+
+                print(
+                    f"{x_user}: "
+                    f"retry {attempt + 1} "
+                    f"error {e}"
+                )
+
+            await asyncio.sleep(
+                random.uniform(2, 4)
+            )
 
         if not posts:
             print(f"{x_user}: no data")
@@ -110,11 +130,12 @@ async def process_x(name, accounts, cache, semaphore):
             try:
                 if len(media_group) == 1:
                     m = media_group[0]
+                    media = m["media"]
 
                     if m["type"] == "photo":
-                        await send_photo(m["media"], caption=m.get("caption"), parse_mode="HTML")
+                        await send_photo(media, caption=m.get("caption"), parse_mode="HTML")
                     else:
-                        await send_video(m["media"], caption=m.get("caption"), parse_mode="HTML")
+                        await send_video(media, caption=m.get("caption"), parse_mode="HTML")
 
                 else:
                     await send_media_group(media_group)
