@@ -31,7 +31,6 @@ async def close_telegram():
 def is_admin(user_id: int):
     return str(user_id) == str(ADMIN_ID)
 
-
 # =========================
 # 🔵 INTERNAL SEND
 # =========================
@@ -42,19 +41,28 @@ async def _post(method, payload):
         f"bot{TOKEN}/{method}"
     )
 
-    async with session.post(
-        url,
-        data=payload
-    ) as res:
+    try:
+        async with session.post(
+            url,
+            data=payload
+        ) as res:
 
-        if res.status != 200:
+            if res.status != 200:
 
-            text = await res.text()
+                text = await res.text()
+                print(
+                    f"❌ Telegram {method} error:",
+                    text
+                )
+                return False
+            return True
 
-            print(
-                f"❌ Telegram {method} error:",
-                text
-            )
+    except Exception as e:
+        print(
+            f"❌ Telegram {method} exception:",
+            e
+        )
+        return False
 
 # =========================
 # 🔵 INTERNAL (REAL SENDER)
@@ -100,10 +108,30 @@ async def _send_photo(photo_url, caption=None, parse_mode=None):
     if parse_mode:
         payload["parse_mode"] = parse_mode
 
-    await _post(
+    success = await _post(
         "sendPhoto",
         payload
     )
+
+    if not success:
+
+        caption_text = (
+            caption or ""
+        )
+
+        msg = (
+            f"{caption_text}\n\n"
+            f"⚠️ Preview gambar "
+            f"gagal!\n"
+            f'🔗 <a href="{photo_url}">'
+            f"Download disini"
+            f"</a>"
+        )
+
+        await _send_message(
+            msg,
+            parse_mode=parse_mode
+        )
 
 async def _send_video(video_url, caption=None, parse_mode=None):
 
@@ -116,18 +144,37 @@ async def _send_video(video_url, caption=None, parse_mode=None):
     if parse_mode:
         payload["parse_mode"] = parse_mode
 
-    await _post(
+    success = await _post(
         "sendVideo",
         payload
     )
 
-async def _send_media_group(media_group):
-    MAX_MEDIA = 10
+    if not success:
 
+        caption_text = (
+            caption or ""
+        )
+
+        msg = (
+            f"{caption_text}\n\n"
+            f"⚠️ Preview video "
+            f"gagal!\n"
+            f'🔗 <a href="{video_url}">'
+            f"Download disini"
+            f"</a>"
+        )
+
+        await _send_message(
+            msg,
+            parse_mode=parse_mode
+        )
+
+async def _send_media_group(media_group):
+
+    MAX_MEDIA = 10
     for i in range(0, len(media_group), MAX_MEDIA):
         chunk = media_group[i:i + MAX_MEDIA]
 
-        # caption hanya di album pertama
         if i != 0:
             for item in chunk:
                 item.pop("caption", None)
@@ -137,10 +184,58 @@ async def _send_media_group(media_group):
             "media": json.dumps(chunk)
         }
 
-        await _post(
+        success = await _post(
             "sendMediaGroup",
             payload
         )
+
+        if not success:
+
+            photos = [
+                x for x in chunk
+                if x["type"] == "photo"
+            ]
+
+            videos = [
+                x for x in chunk
+                if x["type"] == "video"
+            ]
+
+            # =====================
+            # PHOTO GROUP
+            # =====================
+
+            if photos:
+
+                await _post(
+                    "sendMediaGroup",
+                    {
+                        "chat_id": CHANNEL_ID,
+                        "media": json.dumps(
+                            photos
+                        )
+                    }
+                )
+
+            # =====================
+            # VIDEOS
+            # =====================
+
+            for idx, v in enumerate(videos):
+
+                await _send_video(
+                    v["media"],
+                    caption=(
+                        v.get("caption")
+                        if not photos and idx == 0
+                        else None
+                    ),
+                    parse_mode=(
+                        v.get("parse_mode")
+                        if not photos and idx == 0
+                        else None
+                    )
+                )
 
 # =========================
 # 🔵 PUBLIC (QUEUE WRAPPER)

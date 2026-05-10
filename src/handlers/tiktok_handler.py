@@ -13,18 +13,36 @@ from src.utils.caption import format_tiktok_caption
 
 async def process_tiktok(name, accounts, cache, semaphore):
     tiktok_user = accounts.get("tiktok")
-
     if not tiktok_user:
         return
 
     async with semaphore:
         await asyncio.sleep(random.uniform(2, 3))
 
-        try:
-            videos = await get_latest_tiktoks(tiktok_user, limit=3)
-        except Exception as e:
-            print(f"{tiktok_user}: error {e}")
-            return
+        videos = []
+
+        for attempt in range(3):
+
+            try:
+
+                videos = await get_latest_tiktoks(
+                    tiktok_user,
+                    limit=3
+                )
+
+                if videos:
+                    break
+
+            except Exception as e:
+
+                print(
+                    f"{tiktok_user}: retry "
+                    f"{attempt + 1} error {e}"
+                )
+
+            await asyncio.sleep(
+                random.uniform(5, 8)
+            )
 
         if not videos:
             print(f"{tiktok_user}: no data")
@@ -53,8 +71,8 @@ async def process_tiktok(name, accounts, cache, semaphore):
             caption = format_tiktok_caption(
                 name, tiktok_user,
                 link,
-                result.get("create_time"),
-                result.get("description")
+                result.get("create_time") if result else None,
+                result.get("description") if result else None
             )
 
             try:
