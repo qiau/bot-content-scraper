@@ -9,7 +9,7 @@ from email.utils import (
 )
 
 from src.utils.fetch_utils import fetch
-from src.utils.parser_utils import parse_media
+from utils.nitter_parser import parse_media
 
 NITTER_INSTANCES = [
     "https://nitter.net"

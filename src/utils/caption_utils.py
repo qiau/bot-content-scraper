@@ -1,5 +1,5 @@
 from html import escape
-from src.utils.time import format_wib_time
+from utils.time_utils import format_wib_time
 
 def format_instagram_caption(
     name, 
