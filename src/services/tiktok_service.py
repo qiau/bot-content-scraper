@@ -1,7 +1,7 @@
 import yt_dlp
 import asyncio
 import aiohttp
-
+from html import unescape
 
 # =========================
 # 🔴 AMBIL VIDEO ID (yt_dlp)
@@ -68,10 +68,9 @@ async def get_tiktok_video_url(tiktok_url):
                         "type": "image",
                         "data": d["images"],
                         "create_time": d.get("create_time"),
-                        "description": (
+                        "description": unescape(
                             d.get("title", "")
-                            .strip()
-                        )
+                        ).strip()
                     }
 
                 if d.get("play"):
@@ -79,10 +78,9 @@ async def get_tiktok_video_url(tiktok_url):
                         "type": "video",
                         "data": d["play"],
                         "create_time": d.get("create_time"),
-                        "description": (
+                        "description": unescape(
                             d.get("title", "")
-                            .strip()
-                        )
+                        ).strip()
                     }
 
     except Exception as e:
