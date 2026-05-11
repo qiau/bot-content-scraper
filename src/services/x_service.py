@@ -9,7 +9,7 @@ from email.utils import (
 )
 
 from src.utils.fetch_utils import fetch
-from utils.nitter_parser import parse_media
+from src.utils.nitter_parser import parse_media
 
 NITTER_INSTANCES = [
     "https://nitter.net"
@@ -24,7 +24,7 @@ HEADERS = {
     )
 }
 
-async def get_latest_tweets(username, limit=3):
+async def get_latest_tweets(username, limit):
     async with aiohttp.ClientSession(headers=HEADERS) as session:
 
         instances = NITTER_INSTANCES.copy()

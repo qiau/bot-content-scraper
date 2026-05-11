@@ -10,9 +10,9 @@ from src.handlers.telegram_handler import (
     close_telegram
 )
 from src.handlers.instagram_handler import process_instagram
-from utils.cache_storage import load_cache, save_cache
+from src.utils.cache_storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
-from utils.runtime_state import set_mode, is_running
+from src.utils.runtime_state import set_mode, is_running
 
 load_dotenv()
 

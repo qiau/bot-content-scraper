@@ -6,7 +6,7 @@ from html import unescape
 # =========================
 # 🔴 AMBIL VIDEO ID (yt_dlp)
 # =========================
-async def get_latest_tiktoks(username, limit=3):
+async def get_latest_tiktoks(username, limit):
     url = f"https://www.tiktok.com/@{username}"
 
     loop = asyncio.get_running_loop()

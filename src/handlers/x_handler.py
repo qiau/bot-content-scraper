@@ -5,9 +5,9 @@ from src.services.x_service import get_latest_tweets
 from src.handlers.telegram_handler import (
     send_message, send_photo, send_video, send_media_group
 )
-from utils.cache_storage import update_cache
-from utils.x_video_downloader import extract_media_urls
-from utils.caption_utils import format_x_caption
+from src.utils.cache_storage import update_cache
+from src.utils.x_video_downloader import extract_media_urls
+from src.utils.caption_utils import format_x_caption
 
 async def process_x(name, accounts, cache, semaphore):
     x_user = accounts.get("x")

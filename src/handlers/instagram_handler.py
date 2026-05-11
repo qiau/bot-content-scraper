@@ -2,8 +2,8 @@ from src.services.instagram_service import get_latest_posts
 from src.handlers.telegram_handler import (
     send_photo, send_video, send_media_group, send_message
 )
-from utils.cache_storage import update_cache
-from utils.caption_utils import format_instagram_caption
+from src.utils.cache_storage import update_cache
+from src.utils.caption_utils import format_instagram_caption
 
 async def process_instagram(name, accounts, cache, ig_account, proxy=None):
     instagram_user = accounts.get("instagram")
