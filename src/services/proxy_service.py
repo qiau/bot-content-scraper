@@ -7,9 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PROXY_API = (
-    os.getenv("PROXY_2")
+    os.getenv("PROXY_1")
     if datetime.now().day >= 15
-    else os.getenv("PROXY_1")
+    else os.getenv("PROXY_2")
 )
 
 PROXIES = []
