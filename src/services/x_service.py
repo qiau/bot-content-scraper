@@ -82,22 +82,27 @@ async def get_latest_tweets(username, limit=3):
                             pass
 
                     # ambil text tweet
+                    tweet_text = ""
+
                     title_match = re.search(
                         r"<title>(.*?)</title>",
                         item,
                         re.S
                     )
 
-                    tweet_text = ""
-
                     if title_match:
+                        tweet_text = unescape(
+                            title_match.group(1)
+                        ).strip()
 
-                        tweet_text = (
-                            unescape(
-                                title_match.group(1)
-                            )
-                            .strip()
+                        tweet_text = re.sub(
+                            r"^R to @.*?:\s*",
+                            "",
+                            tweet_text
                         )
+
+                        if tweet_text == "Image":
+                            tweet_text = ""
 
                     # 🔥 4. parse media
                     images, has_video = parse_media(item)
