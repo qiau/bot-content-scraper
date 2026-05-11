@@ -8,8 +8,8 @@ from src.services.tiktok_service import (
 from src.handlers.telegram_handler import (
     send_message, send_video, send_media_group
 )
-from utils.cache_storage import update_cache
-from utils.caption_utils import format_tiktok_caption
+from src.utils.cache_storage import update_cache
+from src.utils.caption_utils import format_tiktok_caption
 
 async def process_tiktok(name, accounts, cache, semaphore):
     tiktok_user = accounts.get("tiktok")

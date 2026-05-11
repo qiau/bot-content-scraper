@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 
-from handlers.telegram_handler import _send_message
-from utils.caption_utils import format_birthday_caption
+from src.handlers.telegram_handler import _send_message
+from src.utils.caption_utils import format_birthday_caption
 
 def load_targets():
     with open("data/targets.json", "r") as f:
