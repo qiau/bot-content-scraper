@@ -10,9 +10,9 @@ from src.handlers.telegram_handler import (
 )
 from src.handlers.x_handler import process_x
 from src.services.proxy_service import load_proxies 
-from src.utils.storage import load_cache, save_cache
+from utils.cache_storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
-from src.utils.runtime import is_running
+from utils.runtime_state import is_running
 
 load_dotenv()
 
