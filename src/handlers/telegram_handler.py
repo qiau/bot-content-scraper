@@ -1,6 +1,7 @@
 import os
 import aiohttp
 import json
+import asyncio
 from dotenv import load_dotenv
 
 from src.utils.telegram_queue import enqueue
@@ -41,28 +42,32 @@ async def _post(method, payload):
         f"bot{TOKEN}/{method}"
     )
 
-    try:
-        async with session.post(
-            url,
-            data=payload
-        ) as res:
+    for attempt in range(2):
+        try:
+            async with session.post(
+                url,
+                data=payload
+            ) as res:
 
-            if res.status != 200:
-
+                if res.status == 200:
+                    return True
+                
                 text = await res.text()
                 print(
                     f"❌ Telegram {method} error:",
                     text
                 )
-                return False
-            return True
 
-    except Exception as e:
-        print(
-            f"❌ Telegram {method} exception:",
-            e
-        )
-        return False
+        except Exception as e:
+            print(
+                f"❌ Telegram {method} exception:",
+                e
+            )
+
+        if attempt == 0:
+            await asyncio.sleep(5)
+
+    return False
 
 # =========================
 # 🔵 INTERNAL (REAL SENDER)
