@@ -46,7 +46,8 @@ async def _post(method, payload):
         try:
             async with session.post(
                 url,
-                data=payload
+                data=payload,
+                timeout=60
             ) as res:
 
                 if res.status == 200:
