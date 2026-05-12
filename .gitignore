@@ -25,3 +25,4 @@ Thumbs.db
 # Optional: IDE
 .vscode/
 .idea/
+playwright_data/
