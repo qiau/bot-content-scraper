@@ -12,7 +12,7 @@ async def telegram_worker():
         except Exception as e:
             print("Telegram error:", e)
 
-        await asyncio.sleep(random.uniform(3,5))
+        await asyncio.sleep(random.uniform(15,20))
         telegram_queue.task_done()
 
 async def enqueue(func, *args):

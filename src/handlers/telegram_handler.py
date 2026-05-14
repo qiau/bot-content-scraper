@@ -42,32 +42,27 @@ async def _post(method, payload):
         f"bot{TOKEN}/{method}"
     )
 
-    for attempt in range(2):
-        try:
-            async with session.post(
-                url,
-                data=payload,
-                timeout=60
-            ) as res:
+    try:
+        async with session.post(
+            url,
+            data=payload,
+            timeout=90
+        ) as res:
 
-                if res.status == 200:
-                    return True
+            if res.status == 200:
+                return True
                 
-                text = await res.text()
-                print(
-                    f"❌ Telegram {method} error:",
-                    text
-                )
-
-        except Exception as e:
+            text = await res.text()
             print(
-                f"❌ Telegram {method} exception:",
-                e
+                f"❌ Telegram {method} error:",
+                text
             )
 
-        if attempt == 0:
-            await asyncio.sleep(5)
-
+    except Exception as e:
+        print(
+            f"❌ Telegram {method} exception:",
+            e
+        )
     return False
 
 # =========================
