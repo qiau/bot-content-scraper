@@ -12,7 +12,12 @@ async def telegram_worker():
         except Exception as e:
             print("Telegram error:", e)
 
-        await asyncio.sleep(random.uniform(15,20))
+        if func.__name__ == "_send_message":
+            delay = random.uniform(3, 5)
+        else:
+            delay = random.uniform(10, 15)
+
+        await asyncio.sleep(delay)
         telegram_queue.task_done()
 
 async def enqueue(func, *args):
