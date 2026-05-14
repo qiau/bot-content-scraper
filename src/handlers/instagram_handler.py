@@ -5,8 +5,8 @@ from src.handlers.telegram_handler import (
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_instagram_caption
 
-async def process_instagram(name, accounts, cache, ig_account, proxy=None):
-    instagram_user = accounts.get("instagram")
+async def process_instagram(name, target, cache, ig_account, proxy=None):
+    instagram_user = target.get("instagram")
 
     if not instagram_user:
         return "skip"

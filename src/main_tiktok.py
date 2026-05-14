@@ -8,7 +8,9 @@ from src.handlers.telegram_handler import (
     close_telegram,
 )
 from src.handlers.tiktok_handler import process_tiktok
+from src.services.running_error_service import error_service
 from src.utils.cache_storage import load_cache, save_cache
+from src.utils.cache_failed_storage import load_failed, save_failed
 from src.utils.telegram_queue import telegram_worker, telegram_queue
 from src.utils.runtime_state import is_running
 
@@ -31,12 +33,16 @@ async def main():
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("tiktok")
+    failed = load_failed("tiktok")
+
+    if failed:
+        error_service(cache, failed)
 
     TARGETS = load_targets()
 
     tasks = []
 
-    for name, accounts in TARGETS.items():
+    for name, target in TARGETS.items():
 
         if not is_running("tt"):
             print("⛔ TikTok dihentikan")
@@ -45,18 +51,21 @@ async def main():
         tasks.append(
             process_tiktok(
                 name,
-                accounts,
-                cache,
+                target,
+                cache, 
+                failed,
                 semaphore
             )
         )
 
-    await asyncio.gather(*tasks)
+    try:
+        await asyncio.gather(*tasks)
+        await telegram_queue.join()
 
-    save_cache(cache, "tiktok")
-
-    await telegram_queue.join()
-    await close_telegram()
+    finally:
+        save_cache(cache, "tiktok")
+        save_failed(failed, "tiktok")
+        await close_telegram()
 
 if __name__ == "__main__":
     asyncio.run(main())

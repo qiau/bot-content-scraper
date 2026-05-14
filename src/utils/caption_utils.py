@@ -1,26 +1,50 @@
 from html import escape
 from src.utils.time_utils import format_wib_time
 
+def sanitize_telegram_text(text):
+    return (
+        text
+        .replace("@", "@\u200B")
+        .replace("#", "#\u200B")
+    )
+
+def safe_text(text):
+    return escape(
+        sanitize_telegram_text(text)
+    )
+
 def format_instagram_caption(
     name, 
     username,
     link,
-    timestamp=None
+    timestamp=None,
+    description=None
 ):
 
     date_text = format_wib_time(
         timestamp
     )
 
+    caption_text = ""
+
+    if description:
+
+        caption_text = (
+            f"\n\n"
+            f"<blockquote>"
+            f"{safe_text(description)}"
+            f"</blockquote>"
+        )
+
     return (
         f"📸 <b>Instagram Update • "
-        f"{escape(name)}</b>\n\n"
+        f"{escape(name)}</b>"
+        f"{caption_text}\n\n"
         f"👤 <code>@{escape(username)}</code>\n"
         f"🗓 {date_text}\n\n"
         f'🔗 <a href="{link}">'
-        f'Lihat postingan</a>'
+        f"Lihat postingan</a>"
     )
-
 
 def format_tiktok_caption(
     name, 
@@ -41,7 +65,7 @@ def format_tiktok_caption(
         caption_text = (
             f"\n\n"
             f"<blockquote>"
-            f"{escape(description)}"
+            f"{safe_text(description)}"
             f"</blockquote>"
         )
 
@@ -73,7 +97,7 @@ def format_x_caption(
         caption_text = (
             f"\n\n"
             f"<blockquote>"
-            f"{escape(description)}"
+            f"{safe_text(description)}"
             f"</blockquote>"
         )
 

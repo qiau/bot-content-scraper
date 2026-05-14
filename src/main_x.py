@@ -55,7 +55,7 @@ async def main():
     TARGETS = load_targets()
     tasks = []
     
-    for name, accounts in TARGETS.items():
+    for name, target in TARGETS.items():
 
         if not is_running("x"):
             print("⛔ X dihentikan")
@@ -64,7 +64,7 @@ async def main():
         tasks.append(
             process_x(
                 name,
-                accounts,
+                target,
                 cache,
                 semaphore
             )

@@ -1,19 +1,19 @@
 import json
 import os
 
-CACHE_DIR = "data"
+CACHE_DIR = "data/cache"
 
 def get_cache_file(platform):
-    return os.path.join(CACHE_DIR, f"cache_{platform}.json")
+    return os.path.join(CACHE_DIR, f"{platform}.json")
 
 def load_cache(platform):
-    cache_file = get_cache_file(platform)
+    file = get_cache_file(platform)
 
-    if not os.path.exists(cache_file):
+    if not os.path.exists(file):
         return {}
 
     try:
-        with open(cache_file, "r", encoding="utf-8") as f:
+        with open(file, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
         print(f"Cache {platform} rusak, reset:", e)
@@ -21,28 +21,33 @@ def load_cache(platform):
 
 
 def save_cache(data, platform):
-    cache_file = get_cache_file(platform)
-    temp_file = cache_file + ".tmp"
+    file = get_cache_file(platform)
+    temp = file + ".tmp"
 
-    with open(temp_file, "w", encoding="utf-8") as f:
+    with open(temp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-    os.replace(temp_file, cache_file)
+    os.replace(temp, file)
 
 
-def update_cache(cache, username, new_ids, max_size=3):
-    user_cache = cache.setdefault(username, [])
+def update_cache(cache, username, new_posts, max_size=3):
+    user_cache = cache.get(username, [])
 
-    combined = new_ids + user_cache
+    combined = new_posts + user_cache
 
     seen = set()
     unique = []
 
-    for x in combined:
-        if x not in seen:
-            unique.append(x)
-            seen.add(x)
+    for post in combined:
+        post_id = post["id"]
+        if post_id in seen:
+            continue
+        seen.add(post_id)
+        unique.append(post)
+
+    unique.sort(
+        key=lambda x: int(x["timestamp"]),
+        reverse=True
+    )
 
     cache[username] = unique[:max_size]
-
-    return cache

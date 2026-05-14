@@ -55,18 +55,65 @@ async def _post(method, payload):
                 
                 text = await res.text()
                 print(
-                    f"❌ Telegram {method} error:",
+                    f"❌ Telegram "
+                    f"{method} error "
+                    f"[{res.status}]:",
                     text
                 )
+                if (
+                    res.status == 429
+                    and attempt == 0
+                ):
+
+                    try:
+
+                        data = await res.json()
+
+                        retry_after = (
+                            data
+                            .get("parameters", {})
+                            .get("retry_after", 10)
+                        )
+
+                    except Exception:
+                        retry_after = 10
+
+                    print(
+                        f"⏳ FloodWait "
+                        f"{retry_after}s"
+                    )
+
+                    await asyncio.sleep(retry_after)
+                    continue
+
+                if (
+                    res.status in
+                    [500, 502, 503]
+                    and attempt == 0
+                ):
+                    await asyncio.sleep(5)
+                    continue
+
+                return False
+
+        except asyncio.TimeoutError:
+
+            print(
+                f"⚠️ Telegram "
+                f"{method} timeout"
+            )
+
+            return None
 
         except Exception as e:
+
             print(
-                f"❌ Telegram {method} exception:",
+                f"⚠️ Telegram "
+                f"{method} exception:",
                 e
             )
 
-        if attempt == 0:
-            await asyncio.sleep(5)
+            return None
 
     return False
 
@@ -98,10 +145,16 @@ async def _send_message(text, parse_mode=None):
     if parse_mode:
         payload["parse_mode"] = parse_mode
 
-    await _post(
+    success = await _post(
         "sendMessage",
         payload
     )
+
+    if success is False:
+        await _send_admin_message(
+            f"❌ Gagal mengirim pesan:\n{text}"
+        )
+    return success
 
 async def _send_photo(photo_url, caption=None, parse_mode=None):
 
@@ -119,12 +172,10 @@ async def _send_photo(photo_url, caption=None, parse_mode=None):
         payload
     )
 
-    if not success:
-
+    if success is False:
         caption_text = (
             caption or ""
         )
-
         msg = (
             f"{caption_text}\n\n"
             f"⚠️ Preview gambar "
@@ -133,11 +184,19 @@ async def _send_photo(photo_url, caption=None, parse_mode=None):
             f"Download disini"
             f"</a>"
         )
-
-        await _send_message(
+        fallback_success = await _send_message(
             msg,
             parse_mode=parse_mode
+        ) 
+
+        await asyncio.sleep(2)
+
+        await _send_admin_message(
+            f"❌ Gagal mengirim foto:\n{photo_url}"
         )
+        return fallback_success
+    
+    return success
 
 async def _send_video(video_url, caption=None, parse_mode=None):
 
@@ -155,7 +214,7 @@ async def _send_video(video_url, caption=None, parse_mode=None):
         payload
     )
 
-    if not success:
+    if success is False:
 
         caption_text = (
             caption or ""
@@ -170,14 +229,25 @@ async def _send_video(video_url, caption=None, parse_mode=None):
             f"</a>"
         )
 
-        await _send_message(
+        fallback_success = await _send_message(
             msg,
             parse_mode=parse_mode
+        ) 
+
+        await asyncio.sleep(2)
+
+        await _send_admin_message(
+            f"❌ Gagal mengirim video:\n{video_url}"
         )
+        return fallback_success
+    
+    return success
 
 async def _send_media_group(media_group):
 
     MAX_MEDIA = 10
+    overall_success = True
+
     for i in range(0, len(media_group), MAX_MEDIA):
         chunk = media_group[i:i + MAX_MEDIA]
 
@@ -195,7 +265,9 @@ async def _send_media_group(media_group):
             payload
         )
 
-        if not success:
+        if success is False:
+            
+            fallback_success = False
 
             photos = [
                 x for x in chunk
@@ -213,7 +285,7 @@ async def _send_media_group(media_group):
 
             if photos:
 
-                await _post(
+                photo_success = await _post(
                     "sendMediaGroup",
                     {
                         "chat_id": CHANNEL_ID,
@@ -222,6 +294,8 @@ async def _send_media_group(media_group):
                         )
                     }
                 )
+                if photo_success is True:
+                    fallback_success = True
 
             # =====================
             # VIDEOS
@@ -229,7 +303,7 @@ async def _send_media_group(media_group):
 
             for idx, v in enumerate(videos):
 
-                await _send_video(
+                video_success = await _send_video(
                     v["media"],
                     caption=(
                         v.get("caption")
@@ -242,6 +316,18 @@ async def _send_media_group(media_group):
                         else None
                     )
                 )
+                if video_success is True:
+                    fallback_success = True
+
+            await asyncio.sleep(2)
+
+            await _send_admin_message(
+                f"❌ Gagal mengirim media group"
+            )
+            if not fallback_success:
+                overall_success = False
+                
+    return overall_success
 
 # =========================
 # 🔵 PUBLIC (QUEUE WRAPPER)
@@ -250,14 +336,14 @@ async def _send_media_group(media_group):
 async def send_admin_message(text, parse_mode=None):
     await enqueue(_send_admin_message, text, parse_mode)
 
-async def send_message(text, parse_mode=None):
-    await enqueue(_send_message, text, parse_mode)
+async def send_message(text, parse_mode=None, failed_meta=None):
+    await enqueue(_send_message, text, parse_mode, failed_meta=failed_meta)
 
-async def send_photo(photo_url, caption=None, parse_mode=None):
-    await enqueue(_send_photo, photo_url, caption, parse_mode)
+async def send_photo(photo_url, caption=None, parse_mode=None, failed_meta=None):
+    await enqueue(_send_photo, photo_url, caption, parse_mode, failed_meta=failed_meta)
 
-async def send_video(video_url, caption=None, parse_mode=None):
-    await enqueue(_send_video, video_url, caption, parse_mode)
+async def send_video(video_url, caption=None, parse_mode=None, failed_meta=None):
+    await enqueue(_send_video, video_url, caption, parse_mode, failed_meta=failed_meta)
 
-async def send_media_group(media_group):
-    await enqueue(_send_media_group, media_group)
+async def send_media_group(media_group, failed_meta=None):
+    await enqueue(_send_media_group, media_group, failed_meta=failed_meta)

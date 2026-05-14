@@ -11,8 +11,8 @@ from src.handlers.telegram_handler import (
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_tiktok_caption
 
-async def process_tiktok(name, accounts, cache, semaphore):
-    tiktok_user = accounts.get("tiktok")
+async def process_tiktok(name, target, cache, failed, semaphore):
+    tiktok_user = target.get("tiktok")
     if not tiktok_user:
         return
 
@@ -22,9 +22,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
         videos = []
 
         for attempt in range(3):
-
             try:
-
                 videos = await get_latest_tiktoks(
                     tiktok_user,
                     limit=3
@@ -34,7 +32,6 @@ async def process_tiktok(name, accounts, cache, semaphore):
                     break
 
             except Exception as e:
-
                 print(
                     f"{tiktok_user}: retry "
                     f"{attempt + 1} error {e}"
@@ -49,16 +46,16 @@ async def process_tiktok(name, accounts, cache, semaphore):
             return
 
         user_cache = cache.get(tiktok_user,[])
-        latest_cached_id = max(
-            map(int, user_cache),
-            default=0
-        )
-        new_ids = []
+
+        latest_cached_timestamp = 0
+
+        if user_cache:
+            latest_cached_timestamp = (
+                user_cache[0]["timestamp"]
+            )
+        new_posts = []
 
         for vid in reversed(videos):
-            # skip video lama
-            if int(vid) <= latest_cached_id:
-                continue
 
             link = f"https://www.tiktok.com/@{tiktok_user}/video/{vid}"
 
@@ -68,45 +65,79 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 print(f"{tiktok_user}: downloader error {e}")
                 result = None
 
+            if not result:
+                continue
+
+            timestamp = result.get("create_time", 0)
+            
+            if (timestamp <= latest_cached_timestamp):
+                continue
+
+            description = result.get("description", None) 
+
+            type = result.get("type")
+
             caption = format_tiktok_caption(
                 name, tiktok_user,
                 link,
-                result.get("create_time") if result else None,
-                result.get("description") if result else None
+                timestamp,
+                description
             )
 
-            try:
-                if result and result.get("type") == "video":
-                    await send_video(result["data"], caption=caption, parse_mode="HTML")
+            failed_meta = (
+                failed,
+                tiktok_user,
+                {
+                    "id": vid,
+                    "timestamp": timestamp,
+                    "url": link,
+                    "retries": 0
+                }
+            )
 
-                elif result and result.get("type") == "image":
-                    images = result["data"]
+            if type == "video":
+                await send_video(
+                    result["data"],
+                    caption=caption,
+                    parse_mode="HTML",
+                    failed_meta=failed_meta
+                )
 
-                    media_group = []
+            elif type == "image":
+                images = result["data"]
 
-                    for i, img in enumerate(images):
-                        item = {
-                            "type": "photo",
-                            "media": img.strip()
-                        }
+                media_group = []
 
-                        if i == 0:
-                            item["caption"] = caption
-                            item["parse_mode"] = "HTML"
+                for i, img in enumerate(images):
+                    item = {
+                        "type": "photo",
+                        "media": img.strip()
+                    }
 
-                        media_group.append(item)
+                    if i == 0:
+                        item["caption"] = caption
+                        item["parse_mode"] = "HTML"
 
-                    await send_media_group(media_group)
+                    media_group.append(item)
 
-                else:
-                    await send_message(caption, parse_mode="HTML")
+                await send_media_group(
+                    media_group,
+                    failed_meta=failed_meta
+                )
 
-                new_ids.append(vid)
+            else:
+                await send_message(
+                    caption, 
+                    parse_mode="HTML", 
+                    failed_meta=failed_meta
+                )
 
-            except Exception as e:
-                print(f"{tiktok_user}: gagal kirim {vid}:", e)
+            new_posts.append({
+                "id": vid,
+                "timestamp": timestamp
+            })
 
-            await asyncio.sleep(random.uniform(2, 3))
+        await asyncio.sleep(random.uniform(2, 3))
 
-        if new_ids:
-            update_cache(cache, tiktok_user, new_ids)
+        if new_posts: 
+            update_cache(cache, tiktok_user, new_posts)

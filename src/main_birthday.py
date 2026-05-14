@@ -14,9 +14,9 @@ def main():
 
     today = datetime.now()
 
-    for name, data in targets.items():
+    for name, target in targets.items():
 
-        birth_date = data.get("birth_date")
+        birth_date = target.get("birth_date")
 
         if not birth_date:
             continue

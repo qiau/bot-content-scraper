@@ -65,14 +65,14 @@ async def main():
         fail_count = 0
         counter = 0
 
-        for name, accounts in chunk:
+        for name, target in chunk:
             if not is_running("ig"):
                 print("⛔ Dihentikan oleh Telegram")
                 break
 
             result = await process_instagram(
                 name,
-                accounts,
+                target,
                 cache,
                 ig_account,
                 proxy=None

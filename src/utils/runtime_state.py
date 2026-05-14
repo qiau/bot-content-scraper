@@ -2,11 +2,10 @@ import os
 
 RUNTIME_DIR = "data/runtime"
 
-
 def get_mode_file(platform):
     return os.path.join(
         RUNTIME_DIR,
-        f"{platform}_mode.txt"
+        f"{platform}.txt"
     )
 
 

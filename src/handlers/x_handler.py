@@ -9,8 +9,8 @@ from src.utils.cache_storage import update_cache
 from src.utils.x_video_downloader import extract_media_urls
 from src.utils.caption_utils import format_x_caption
 
-async def process_x(name, accounts, cache, semaphore):
-    x_user = accounts.get("x")
+async def process_x(name, target, cache, semaphore):
+    x_user = target.get("x")
     if not x_user:
         return
 
