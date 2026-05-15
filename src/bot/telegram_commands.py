@@ -47,9 +47,9 @@ async def handle_update(update):
     elif cmd == "/start_all":
 
         platforms = [
-            "ig",
+            "instagram",
             "x",
-            "tt"
+            "tiktok"
         ]
 
         started = []
@@ -83,9 +83,9 @@ async def handle_update(update):
     elif cmd == "/stop_all":
 
         platforms = [
-            "ig",
+            "instagram",
             "x",
-            "tt"
+            "tiktok"
         ]
 
         stopped = []
