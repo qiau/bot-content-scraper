@@ -2,7 +2,8 @@ from src.handlers.telegram_handler import (
     _send_admin_message,
     is_admin
 )
-from src.utils.runtime_state import set_mode, is_running
+from src.handlers.instagram_post_handler import process_instagram_post
+from src.utils.runtime_state import set_mode, is_running, set_upload_mode
 from src.utils.config_manager import update_account_config, get_account_config
 from src.utils.target_manager import add_target, update_target
 
@@ -37,12 +38,30 @@ async def handle_update(update):
             "/stop_tiktok\n"
             "/status_tiktok\n\n"
 
+            "/set_cookies\n"
             "/set_ig\n"
-            "/get_ig\n"
+            "/get_ig\n\n"
             
             "/add_target\n"
             "/set_target\n"
+
+
         )
+
+    elif cmd.startswith("/post"):
+        parts = text.split(
+            maxsplit=1
+        )
+
+        if len(parts) != 2:
+            await _send_admin_message(
+                "❌ Format:\n/post URL"
+            )
+            return
+
+        url = parts[1].strip()
+
+        await process_instagram_post(url)
 
     elif cmd == "/start_all":
 
@@ -155,6 +174,13 @@ async def handle_update(update):
         await _send_admin_message(
             f"{platform.upper()} Status:\n{status}"
         )   
+
+    elif cmd == "/set_cookies":
+        set_upload_mode("cookies", duration=600)
+
+        await _send_admin_message(
+            "📂 Upload file cookies.txt dalam 10 menit"
+        )
 
     elif cmd.startswith("/set_ig"):
         parts = text.split()

@@ -44,8 +44,9 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
         
         caption = format_instagram_caption(
             name, instagram_user,
-            link,
-            post.get("taken_at")
+            link, #"post_url": "https://www.instagram.com/p/DYOsEjPj9sm/",
+            post.get("post_date"), #"post_date": "2026-05-12 07:02:37",
+            post.get("description") #"description": "Nyobain shutter drag pakai Fuji XE5 + kit lens, flashnya Godox IT30 \nSettingan: \nShutter speed 1/15 \nF2.8\nISO auto\nFlash -1.7\n#shutterdrag #fujifilmphotography #slowshutter",
         )
 
         media_group = []

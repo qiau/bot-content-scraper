@@ -1,7 +1,6 @@
 import os
 import aiohttp
 import json
-import asyncio
 from dotenv import load_dotenv
 
 from src.utils.telegram_queue import enqueue
