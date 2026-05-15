@@ -27,7 +27,6 @@ def main():
             print(f"{name}: invalid birth_date")
             continue
 
-        # cek apakah hari & bulan sama
         if (born.month, born.day) == (today.month, today.day):
 
             age = today.year - born.year

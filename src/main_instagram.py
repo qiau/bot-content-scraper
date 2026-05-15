@@ -31,7 +31,7 @@ def chunk_targets(targets, n):
 
 async def main():
 
-    if not is_running("ig"):
+    if not is_running("instagram"):
         print("⛔ IG mode STOP (skip run)")
         return
     
@@ -54,7 +54,7 @@ async def main():
     should_stop_after_run = False
 
     for i, chunk in enumerate(chunks):
-        if not is_running("ig"):
+        if not is_running("instagram"):
             print("⛔ Dihentikan sebelum mulai akun")
             break
 
@@ -66,7 +66,7 @@ async def main():
         counter = 0
 
         for name, accounts in chunk:
-            if not is_running("ig"):
+            if not is_running("instagram"):
                 print("⛔ Dihentikan oleh Telegram")
                 break
 
@@ -119,7 +119,7 @@ async def main():
 
     if should_stop_after_run:
         await _send_admin_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
-        set_mode("ig","stopped")
+        set_mode("instagram", "stopped")
 
     await telegram_queue.join()
     await close_telegram()

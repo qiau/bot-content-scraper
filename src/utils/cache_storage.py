@@ -1,10 +1,10 @@
 import json
 import os
 
-CACHE_DIR = "data"
+CACHE_DIR = "data/cache"
 
 def get_cache_file(platform):
-    return os.path.join(CACHE_DIR, f"cache_{platform}.json")
+    return os.path.join(CACHE_DIR, f"{platform}_cache.json")
 
 def load_cache(platform):
     cache_file = get_cache_file(platform)

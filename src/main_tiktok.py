@@ -22,7 +22,7 @@ def load_targets():
 
 async def main():
 
-    if not is_running("tt"):
+    if not is_running("tiktok"):
         print("⛔ TikTok mode STOP")
         return
      
@@ -38,7 +38,7 @@ async def main():
 
     for name, accounts in TARGETS.items():
 
-        if not is_running("tt"):
+        if not is_running("tiktok"):
             print("⛔ TikTok dihentikan")
             break
 
