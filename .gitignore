@@ -8,7 +8,6 @@ venv/
 #data
 data/*
 !data/
-!data/runtime
 !data/targets.json
 
 # Python cache
