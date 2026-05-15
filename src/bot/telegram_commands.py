@@ -23,6 +23,7 @@ async def handle_update(update):
         await _send_admin_message(
             "🤖 Bot siap\n\n"
             
+            "/post\n"
             "/start_all\n"
             "/stop_all\n\n"
 
@@ -44,8 +45,6 @@ async def handle_update(update):
             
             "/add_target\n"
             "/set_target\n"
-
-
         )
 
     elif cmd.startswith("/post"):
