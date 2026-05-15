@@ -25,17 +25,17 @@ async def handle_update(update):
             "/start_all\n"
             "/stop_all\n\n"
 
-            "/start_ig\n"
-            "/stop_ig\n"
-            "/status_ig\n\n"
+            "/start_instagram\n"
+            "/stop_instagram\n"
+            "/status_instagram\n\n"
 
             "/start_x\n"
             "/stop_x\n"
             "/status_x\n\n"
 
-            "/start_tt\n"
-            "/stop_tt\n"
-            "/status_tt\n\n"
+            "/start_tiktok\n"
+            "/stop_tiktok\n"
+            "/status_tiktok\n\n"
 
             "/set_ig\n"
             "/get_ig\n"
