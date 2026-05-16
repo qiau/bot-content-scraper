@@ -100,8 +100,12 @@ async def get_latest_tweets(username, limit):
                             "",
                             tweet_text
                         )
-
-                        if tweet_text == "Image":
+                        
+                        if tweet_text in [
+                            "Image",
+                            "Video",
+                            "Media"
+                        ]:
                             tweet_text = ""
 
                     # 🔥 4. parse media
