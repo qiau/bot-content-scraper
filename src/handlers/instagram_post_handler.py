@@ -15,13 +15,17 @@ async def process_instagram_post(url):
     try:
         post = await extract_instagram_post(url)
     except Exception as e:
-        print(
-            "[IG POST] ❌ extract error:",
-            e
+        error_msg = (
+            f"[IG POST] ❌ extract error:\n\n"
+            f"{str(e)}"
         )
+
+        print(error_msg)
+
         await _send_admin_message(
-            "❌ Gagal mengambil post Instagram"
+            error_msg
         )
+        
         return False
 
     # =====================
