@@ -23,7 +23,9 @@ def get_target_name(
 
 async def extract_instagram_post(url):
     proc = await asyncio.create_subprocess_exec(
-        "gallery-dl",
+        "python3",
+        "-m",
+        "gallery_dl",
         "--cookies",
         COOKIE_FILE,
         "-j",
@@ -38,9 +40,20 @@ async def extract_instagram_post(url):
             stderr.decode().strip()
         )
     
-    raw_data = json.loads(
-        stdout.decode()
-    )
+    if not stdout:
+        raise Exception(
+            "Empty gallery-dl output"
+        )
+    
+    try:
+        raw_data = json.loads(
+            stdout.decode()
+        )
+    except Exception as e:
+        raise Exception(
+            f"JSON parse error: {e}"
+        )
+
     if not raw_data:
         raise Exception("Empty response")
 
