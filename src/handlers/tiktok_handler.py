@@ -6,7 +6,7 @@ from src.services.tiktok_service import (
     get_tiktok_video_url
 )
 from src.handlers.telegram_handler import (
-    send_message, send_video, send_media_group
+    send_message, send_video, send_media_group, send_admin_message
 )
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_tiktok_caption
@@ -22,22 +22,17 @@ async def process_tiktok(name, accounts, cache, semaphore):
         videos = []
 
         for attempt in range(3):
-
             try:
-
                 videos = await get_latest_tiktoks(
                     tiktok_user,
                     limit=3
                 )
-
                 if videos:
                     break
 
             except Exception as e:
-
-                print(
-                    f"{tiktok_user}: retry "
-                    f"{attempt + 1} error {e}"
+                await send_admin_message(
+                    f"Error ambil TikTok {tiktok_user} (attempt {attempt + 1}): {e}"
                 )
 
             await asyncio.sleep(
@@ -65,7 +60,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
             try:
                 result = await get_tiktok_video_url(link)
             except Exception as e:
-                print(f"{tiktok_user}: downloader error {e}")
+                await send_admin_message(f"{tiktok_user}: gagal download {link}: {e}")
                 result = None
 
             caption = format_tiktok_caption(
@@ -104,7 +99,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 new_ids.append(vid)
 
             except Exception as e:
-                print(f"{tiktok_user}: gagal kirim {vid}:", e)
+                await send_admin_message(f"{tiktok_user}: gagal kirim {link}: {e}")
 
             await asyncio.sleep(random.uniform(2, 3))
 

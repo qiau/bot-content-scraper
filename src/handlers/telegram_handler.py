@@ -53,14 +53,13 @@ async def _post(method, payload):
                 return True
                 
             text = await res.text()
-            await _send_admin_message(
-                f"❌ Telegram {method} error:",
-                text
+            print(
+                f"❌ Telegram {method} error:", text
             )
 
     except Exception as e:
-        await _send_admin_message(
-            f"❌ Telegram {method} exception:\n\n{str(e)}"
+        print(
+            f"❌ Telegram {method} exception:", e
         )
     return False
 
