@@ -206,7 +206,6 @@ async def _send_media_group(media_group):
             # =====================
 
             if photos:
-
                 await _post(
                     "sendMediaGroup",
                     {
@@ -222,7 +221,6 @@ async def _send_media_group(media_group):
             # =====================
 
             for idx, v in enumerate(videos):
-
                 await _send_video(
                     v["media"],
                     caption=(

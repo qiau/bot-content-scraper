@@ -20,8 +20,6 @@ async def process_instagram_post(url):
             f"{str(e)}"
         )
 
-        print(error_msg)
-
         await _send_admin_message(
             error_msg
         )
@@ -112,17 +110,11 @@ async def process_instagram_post(url):
     # =====================
 
     try:
-
-        # =====================
-        # SINGLE MEDIA
-        # =====================
-
         if len(media_group) == 1:
 
             media = media_group[0]
 
             if media["type"] == "photo":
-
                 await _send_photo(
                     media["media"],
                     caption=media.get(
@@ -132,7 +124,6 @@ async def process_instagram_post(url):
                 )
 
             else:
-
                 await _send_video(
                     media["media"],
                     caption=media.get(
@@ -141,12 +132,7 @@ async def process_instagram_post(url):
                     parse_mode="HTML"
                 )
 
-        # =====================
-        # MULTIPLE MEDIA
-        # =====================
-
         else:
-
             await _send_media_group(
                 media_group
             )
@@ -154,10 +140,8 @@ async def process_instagram_post(url):
         return True
 
     except Exception as e:
-
-        print(
-            "[IG POST] ❌ send error:",
-            e
+        await _send_admin_message(
+            f"[IG POST] ❌ send error:\n\n{str(e)}"
         )
 
         return False
