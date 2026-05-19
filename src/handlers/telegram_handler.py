@@ -1,5 +1,6 @@
 import os
 import aiohttp
+import asyncio
 import json
 from dotenv import load_dotenv
 
@@ -52,15 +53,14 @@ async def _post(method, payload):
                 return True
                 
             text = await res.text()
-            print(
+            await _send_admin_message(
                 f"❌ Telegram {method} error:",
                 text
             )
 
     except Exception as e:
-        print(
-            f"❌ Telegram {method} exception:",
-            e
+        await _send_admin_message(
+            f"❌ Telegram {method} exception:\n\n{str(e)}"
         )
     return False
 
@@ -188,6 +188,7 @@ async def _send_media_group(media_group):
             "sendMediaGroup",
             payload
         )
+        await asyncio.sleep(2)
 
         if not success:
 
