@@ -23,9 +23,9 @@ def get_target_name(
 
 async def extract_instagram_post(url):
     proc = await asyncio.create_subprocess_exec(
-        # "python3",
-        # "-m",
-        "gallery-dl",
+        "python3",
+        "-m",
+        "gallery_dl",
         "--cookies",
         COOKIE_FILE,
         "-j",
