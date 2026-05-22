@@ -3,7 +3,7 @@ import random
 
 from src.services.x_service import get_latest_tweets
 from src.handlers.telegram_handler import (
-    send_message, send_photo, send_video, send_media_group
+    send_message, send_photo, send_video, send_media_group, send_admin_message
 )
 from src.utils.cache_storage import update_cache
 from src.utils.x_video_downloader import extract_x_data
@@ -20,9 +20,7 @@ async def process_x(name, accounts, cache, semaphore):
         posts = []
 
         for attempt in range(2):
-
             try:
-
                 posts = await get_latest_tweets(
                     x_user,
                     limit=3
@@ -30,11 +28,8 @@ async def process_x(name, accounts, cache, semaphore):
                 break
 
             except Exception as e:
-
-                print(
-                    f"{x_user}: "
-                    f"retry {attempt + 1} "
-                    f"error {e}"
+                await send_admin_message(
+                    f"Error ambil X {x_user} (attempt {attempt + 1}): {e}"
                 )
 
             await asyncio.sleep(

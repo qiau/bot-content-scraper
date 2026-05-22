@@ -7,12 +7,22 @@ async def get_tiktok_story(url):
         "-m",
         "gallery_dl",
         "--simulate",
+        "--retries", "0",
         url,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.DEVNULL
     )
+    
+    try:
+        stdout, _ = await asyncio.wait_for(
+            process.communicate(),
+            timeout=10
+        )
 
-    stdout, _ = await process.communicate()
+    except asyncio.TimeoutError:
+        process.kill()
+        return []
+
     
     if not stdout:
         return []

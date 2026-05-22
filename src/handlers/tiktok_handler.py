@@ -16,17 +16,17 @@ async def process_tiktok(name, accounts, cache, semaphore):
         return
 
     async with semaphore:
-        await asyncio.sleep(random.uniform(2, 3))
+        await asyncio.sleep(1)
 
-        videos = []
+        post_ids = []
 
-        for attempt in range(3):
+        for attempt in range(2):
             try:
-                videos = await get_tiktok_post(
+                post_ids = await get_tiktok_post(
                     tiktok_user,
                     limit=3
                 )
-                if videos:
+                if post_ids:
                     break
 
             except Exception as e:
@@ -35,10 +35,10 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 )
 
             await asyncio.sleep(
-                random.uniform(5, 8)
+                random.uniform(4, 6)
             )
 
-        if not videos:
+        if not post_ids:
             print(f"{tiktok_user}: no data")
             return
 
@@ -48,12 +48,11 @@ async def process_tiktok(name, accounts, cache, semaphore):
         )
         new_items = []
 
-        for vid in reversed(videos):
-            # skip video lama
-            if int(vid) <= latest_cached_id:
+        for post_id in reversed(post_ids):
+            if int(post_id) <= latest_cached_id:
                 continue
 
-            link = f"https://www.tiktok.com/@{tiktok_user}/video/{vid}"
+            link = f"https://www.tiktok.com/@{tiktok_user}/video/{post_id}"
 
             try:
                 result = await extract_tiktok_data(link)
@@ -102,7 +101,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
                     await send_message(caption, parse_mode="HTML")
 
                 new_items.append({
-                    "id": vid,
+                    "id": post_id,
                     "timestamp": timestamp
                 })
 
