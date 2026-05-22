@@ -1,9 +1,6 @@
 import yt_dlp
 import asyncio
 
-# =========================
-# 🔴 AMBIL VIDEO ID (yt_dlp)
-# =========================
 async def get_tiktok_post(username, limit):
     url = f"https://www.tiktok.com/@{username}"
 

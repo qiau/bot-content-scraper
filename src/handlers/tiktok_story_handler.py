@@ -21,18 +21,18 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
         return
 
     async with semaphore:
-        await asyncio.sleep(random.uniform(2, 3))
+        await asyncio.sleep(1)
 
         story_url = (
             f"https://www.tiktok.com/@{tiktok_user}/stories"
         )
 
-        stories = []
+        story_ids = []
 
-        for attempt in range(3):
+        for attempt in range(2):
 
             try:
-                stories = await get_tiktok_story(
+                story_ids = await get_tiktok_story(
                     story_url
                 )
                 break
@@ -44,10 +44,10 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
                 )
 
             await asyncio.sleep(
-                random.uniform(5, 8)
+                random.uniform(4, 6)
             )
 
-        if not stories:
+        if not story_ids:
             print(f"{tiktok_user}: no story")
             return
 
@@ -57,8 +57,7 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
         ) 
         new_story_ids = []
 
-        for story_id in stories:
-
+        for story_id in story_ids:
             if int(story_id) <= latest_cached_id:
                 continue
 
@@ -75,7 +74,6 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
             link = f"https://www.tiktok.com/@{tiktok_user}/video/{story_id}"
             try:
                 result = await extract_tiktok_data(link)
-
                 if not result:
                     continue
 
@@ -114,97 +112,42 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
 
         try:
             if len(media_items) == 1:
-
                 media = media_items[0]
 
-                # VIDEO
                 if media["type"] == "video":
-
                     await send_video(
                         media["data"],
                         caption=caption,
                         parse_mode="HTML"
                     )
 
-                # IMAGE
-                else:
-
-                    images = media["data"]
-
-                    # SINGLE IMAGE
-                    if len(images) == 1:
-
-                        await send_photo(
-                            images[0],
-                            caption=caption,
-                            parse_mode="HTML"
-                        )
-
-                    # MULTIPLE IMAGE
-                    else:
-
-                        media_group = []
-
-                        for i, image in enumerate(
-                            images
-                        ):
-
-                            item = {
-                                "type": "photo",
-                                "media": image
-                            }
-
-                            if i == 0:
-
-                                item["caption"] = (
-                                    caption
-                                )
-
-                                item["parse_mode"] = (
-                                    "HTML"
-                                )
-
-                            media_group.append(
-                                item
-                            )
-
-                        await send_media_group(
-                            media_group
-                        )
-
-            # =====================================
-            # MULTIPLE STORIES
-            # =====================================
+                elif media["type"] == "image":
+                    await send_photo(
+                        media["data"],
+                        caption=caption,
+                        parse_mode="HTML"
+                    )
 
             else:
-
                 media_group = []
 
                 for media in media_items:
 
-                    # VIDEO
                     if media["type"] == "video":
-
                         media_group.append({
                             "type": "video",
                             "media": media["data"]
                         })
 
-                    # IMAGE
-                    else:
+                    elif media["type"] == "image":
+                        media_group.append({
+                            "type": "photo",
+                            "media": media["data"]
+                        })
 
-                        for image in media["data"]:
-
-                            media_group.append({
-                                "type": "photo",
-                                "media": image
-                            })
-
-                # caption first item
                 media_group[0]["caption"] = (
                     caption
                 )
-
                 media_group[0]["parse_mode"] = (
                     "HTML"
                 )
@@ -212,9 +155,6 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
                 await send_media_group(
                     media_group
                 )
-            # =========================
-            # UPDATE CACHE
-            # =========================
 
             update_cache(
                 cache,
