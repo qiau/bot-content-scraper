@@ -2,7 +2,7 @@ from src.handlers.telegram_handler import (
     _send_admin_message,
     is_admin
 )
-from handlers.manual_instagram_handler import process_manual_instagram
+from src.handlers.manual_instagram_handler import process_manual_instagram
 from src.utils.runtime_state import set_mode, is_running, set_upload_mode
 from src.utils.config_manager import update_account_config, get_account_config
 from src.utils.target_manager import add_target, update_target
@@ -22,7 +22,7 @@ async def handle_update(update):
     if cmd == "/start":
         await _send_admin_message(
             "🤖 Bot siap\n\n"
-            
+
             "Manual post:\n"
             "/ig\n\n"
 
