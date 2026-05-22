@@ -1,6 +1,6 @@
 import yt_dlp
 
-def extract_media_urls(tweet_url, expected_count=1,  format_selector="b[ext=mp4]"):
+def extract_x_data(tweet_url, expected_count=1,  format_selector="b[ext=mp4]"):
     ydl_opts = {
         "quiet": True,
         "skip_download": True,

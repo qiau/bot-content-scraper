@@ -68,6 +68,26 @@ def format_tiktok_caption(
         f"Lihat postingan</a>"
     )
 
+def format_tiktok_story_caption(
+    name, 
+    username,
+    link,
+    timestamp=None,
+):
+
+    date_text = format_wib_time(
+        timestamp
+    )
+
+    return (
+        f"🎵 <b>TikTok Story Update • "
+        f"{escape(name)}</b>\n\n"
+        f"👤 <code>@{escape(username)}</code>\n"
+        f"🗓 {date_text}\n\n"
+        f'🔗 <a href="{link}">'
+        f"Lihat story</a>"
+    )
+
 def format_x_caption(
     name, 
     username,

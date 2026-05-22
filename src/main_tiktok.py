@@ -8,6 +8,7 @@ from src.handlers.telegram_handler import (
     close_telegram,
 )
 from src.handlers.tiktok_handler import process_tiktok
+from src.handlers.tiktok_story_handler import process_tiktok_story
 from src.utils.cache_storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
 from src.utils.runtime_state import is_running
@@ -30,7 +31,8 @@ async def main():
 
     asyncio.create_task(telegram_worker())
 
-    cache = load_cache("tiktok")
+    post_cache = load_cache("tiktok_posts")
+    story_cache = load_cache("tiktok_stories")
 
     TARGETS = load_targets()
 
@@ -44,16 +46,26 @@ async def main():
 
         tasks.append(
             process_tiktok(
-                name,
-                accounts,
-                cache,
-                semaphore
+                name=name,
+                accounts=accounts,
+                cache=post_cache,
+                semaphore=semaphore
+            )
+        )
+
+        tasks.append(
+            process_tiktok_story(
+                name=name,
+                accounts=accounts,
+                cache=story_cache,
+                semaphore=semaphore
             )
         )
 
     await asyncio.gather(*tasks)
 
-    save_cache(cache, "tiktok")
+    save_cache(post_cache, "tiktok_posts")
+    save_cache(story_cache, "tiktok_stories")
 
     await telegram_queue.join()
     await close_telegram()

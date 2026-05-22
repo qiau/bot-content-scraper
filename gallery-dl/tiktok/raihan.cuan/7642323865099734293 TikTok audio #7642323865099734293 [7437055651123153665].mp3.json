@@ -1,0 +1,227 @@
+{
+    "id": "7642323865099734293",
+    "desc": "",
+    "createTime": "1779367188",
+    "scheduleTime": 0,
+    "video": {
+        "id": "7642323865099734293",
+        "height": 0,
+        "width": 0,
+        "duration": 0,
+        "ratio": "",
+        "cover": "https://p16-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=nuq0fXanadFQgIdLtpGue1%2BDPig%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1",
+        "originCover": "https://p16-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=nuq0fXanadFQgIdLtpGue1%2BDPig%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1",
+        "dynamicCover": "",
+        "playAddr": "",
+        "downloadAddr": "",
+        "shareCover": [
+            ""
+        ],
+        "reflowCover": "",
+        "zoomCover": {
+            "240": "",
+            "480": "",
+            "720": "",
+            "960": ""
+        }
+    },
+    "author": {
+        "id": "7448542835761398791",
+        "shortId": "",
+        "uniqueId": "raihan.cuan",
+        "nickname": "Raihan Cuan",
+        "avatarLarger": "https://p16-common-sign.tiktokcdn.com/tos-alisg-avt-0068/d88d69e499f90fd5f05e9b04bfebf3c5~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=864b9afa&x-expires=1779555600&x-signature=XQTpD4db9NlMSd1Nx8%2Bug%2FJEoeI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "avatarMedium": "https://p16-common-sign.tiktokcdn.com/tos-alisg-avt-0068/d88d69e499f90fd5f05e9b04bfebf3c5~tplv-tiktokx-cropcenter:720:720.jpeg?dr=14579&refresh_token=2a7d2908&x-expires=1779555600&x-signature=i8OcCJ7uFqHvDIHJZgc%2F7dbZKuk%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "avatarThumb": "https://p16-common-sign.tiktokcdn.com/tos-alisg-avt-0068/d88d69e499f90fd5f05e9b04bfebf3c5~tplv-tiktokx-cropcenter:100:100.jpeg?dr=14579&refresh_token=f9c20e47&x-expires=1779555600&x-signature=0zR3G4zjBh7Rx6W8SMmd6rcKDLo%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "signature": "Cuan bisa dicari.\nJodoh? Nanti dulu.",
+        "createTime": 1734249299,
+        "verified": false,
+        "secUid": "MS4wLjABAAAAVEcy5yf6Oc4eQwBXl-neSyHzrEdC7boVr02F_3m1p6XgAxootPgPQeqUsYd9rKqY",
+        "ftc": false,
+        "relation": 0,
+        "openFavorite": false,
+        "commentSetting": 0,
+        "duetSetting": 0,
+        "stitchSetting": 0,
+        "privateAccount": false,
+        "secret": false,
+        "isADVirtual": false,
+        "roomId": "",
+        "uniqueIdModifyTime": 0,
+        "ttSeller": false,
+        "downloadSetting": 0,
+        "recommendReason": "",
+        "nowInvitationCardUrl": "",
+        "nickNameModifyTime": 0,
+        "isEmbedBanned": false,
+        "canExpPlaylist": false,
+        "suggestAccountBind": false,
+        "UserStoryStatus": 1
+    },
+    "music": {
+        "id": "7437055651123153665",
+        "title": "suara asli - ilc.padang.official",
+        "playUrl": "https://v77.tiktokcdn.com/d69fcb2cf1c5d6516aa18e60aed2a84c/6a108eb3/video/tos/alisg/tos-alisg-v-27dcd7/oYILMEAEEG8mB3Bz3iGOf8HPR10KYijwo4tTAV/?a=1180&bti=ODszNWYuMDE6&&bt=125&ft=.NpOcInz7ThOL~EGXq8Zmo&mime_type=audio_mpeg&rc=aTRnMzpmaDczNmQzOGhkPEBpanZtbW45cmZ1djMzODU8NEA0Yl8tXjRiNTMxXi9jNmIzYSM1ZXNvMmRjaW5gLS1kMS1zcw%3D%3D&vvpl=1&l=202605220113059FD0FE5F8860FC183DC5&btag=e00078000",
+        "coverLarge": "https://p16-common-sign.tiktokcdn.com/tos-useast2a-avt-0068-giso/449c575cadd45d0df352043d3926a40f~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=83591d0a&x-expires=1779555600&x-signature=eJTr7ZMe37uMm9vzoi8NPeifSuQ%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "coverMedium": "https://p16-common-sign.tiktokcdn.com/tos-useast2a-avt-0068-giso/449c575cadd45d0df352043d3926a40f~tplv-tiktokx-cropcenter:720:720.jpeg?dr=14579&refresh_token=fb0878e1&x-expires=1779555600&x-signature=MP0%2B3iafGLBoMNsJAwPQYO%2FMMHI%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "coverThumb": "https://p16-common-sign.tiktokcdn.com/tos-useast2a-avt-0068-giso/449c575cadd45d0df352043d3926a40f~tplv-tiktokx-cropcenter:100:100.jpeg?dr=14579&refresh_token=37088934&x-expires=1779555600&x-signature=3SeToDPAIQmj%2FvKlNpPHx8C6lwo%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my3",
+        "authorName": "ilc.padang.official",
+        "original": true,
+        "private": false,
+        "duration": 18,
+        "scheduleSearchTime": 0,
+        "collected": false,
+        "preciseDuration": {
+            "preciseDuration": 18.625,
+            "preciseShootDuration": 18.625,
+            "preciseAuditionDuration": 18.625,
+            "preciseVideoDuration": 18.625
+        },
+        "isCopyrighted": false,
+        "tt2dsp": {
+            "tt_to_dsp_song_infos": []
+        },
+        "is_unlimited_music": false,
+        "is_commerce_music": true,
+        "shoot_duration": 18
+    },
+    "challenges": [],
+    "stats": {
+        "diggCount": 0,
+        "shareCount": 1,
+        "commentCount": 0,
+        "playCount": 15,
+        "collectCount": "0"
+    },
+    "statsV2": {
+        "diggCount": "0",
+        "shareCount": "1",
+        "commentCount": "0",
+        "playCount": "15",
+        "collectCount": "0",
+        "repostCount": "0"
+    },
+    "warnInfo": [],
+    "originalItem": false,
+    "officalItem": false,
+    "textExtra": [],
+    "secret": false,
+    "forFriend": false,
+    "digged": false,
+    "itemCommentStatus": 3,
+    "takeDown": 0,
+    "effectStickers": [],
+    "authorStats": {
+        "followerCount": 3570,
+        "followingCount": 4,
+        "heart": 27400,
+        "heartCount": 27400,
+        "videoCount": 10,
+        "diggCount": 244,
+        "friendCount": 0
+    },
+    "privateItem": false,
+    "duetEnabled": true,
+    "stitchEnabled": true,
+    "stickersOnItem": [],
+    "isAd": false,
+    "shareEnabled": true,
+    "comments": [],
+    "duetDisplay": 0,
+    "stitchDisplay": 0,
+    "diversificationLabels": [
+        "Social Issues",
+        "Society",
+        "Society"
+    ],
+    "imagePost": {
+        "images": [
+            {
+                "imageURL": {
+                    "urlList": [
+                        "https://p16-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=nuq0fXanadFQgIdLtpGue1%2BDPig%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1",
+                        "https://p19-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=JMPgwjYSRXBdNY8OqrF7%2B6yg%2FNc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1"
+                    ]
+                },
+                "imageWidth": 1080,
+                "imageHeight": 1022
+            }
+        ],
+        "cover": {
+            "imageURL": {
+                "urlList": [
+                    "https://p16-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=nuq0fXanadFQgIdLtpGue1%2BDPig%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1",
+                    "https://p19-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=JMPgwjYSRXBdNY8OqrF7%2B6yg%2FNc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1"
+                ]
+            },
+            "imageWidth": 1080,
+            "imageHeight": 1022
+        },
+        "shareCover": {
+            "imageURL": {
+                "urlList": [
+                    "https://p16-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=nuq0fXanadFQgIdLtpGue1%2BDPig%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1",
+                    "https://p19-common-sign.tiktokcdn.com/tos-alisg-i-photomode-sg/b3df46245aeb4c52af452a6c09bf597e~tplv-photomode-image.jpeg?dr=14555&x-expires=1779555600&x-signature=JMPgwjYSRXBdNY8OqrF7%2B6yg%2FNc%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=9b759fb9&idc=my3&ftpl=1"
+                ]
+            },
+            "imageWidth": 1080,
+            "imageHeight": 1022
+        },
+        "title": ""
+    },
+    "locationCreated": "ID",
+    "story": {
+        "ExpiredAt": "1779453588000",
+        "Viewed": false,
+        "TotalComments": "0",
+        "IsOfficial": false,
+        "ViewerCount": "0"
+    },
+    "suggestedWords": [],
+    "contents": [],
+    "diversificationId": 10087,
+    "collected": false,
+    "channelTags": [],
+    "item_control": {
+        "can_repost": false
+    },
+    "IsAigc": false,
+    "AIGCDescription": "",
+    "backendSourceEventTracking": "",
+    "CategoryType": 114,
+    "textLanguage": "un",
+    "textTranslatable": false,
+    "titleLanguage": "un",
+    "titleTranslatable": false,
+    "authorStatsV2": {
+        "followerCount": "3570",
+        "followingCount": "4",
+        "heart": "27400",
+        "heartCount": "27400",
+        "videoCount": "10",
+        "diggCount": "244",
+        "friendCount": "0"
+    },
+    "isReviewing": false,
+    "creatorAIComment": {
+        "hasAITopic": false,
+        "categoryList": [],
+        "eligibleVideo": false,
+        "notEligibleReason": 101
+    },
+    "user": "raihan.cuan",
+    "date": "2026-05-21 12:39:48",
+    "post_type": "image",
+    "category": "tiktok",
+    "subcategory": "stories",
+    "filename": "",
+    "extension": "mp3",
+    "type": "audio",
+    "image": null,
+    "title": "TikTok audio #7642323865099734293",
+    "num": 0,
+    "file_id": "7437055651123153665",
+    "width": 0,
+    "height": 0,
+    "duration": 18
+}

@@ -72,7 +72,7 @@ async def get_latest_tweets(username, limit):
                         item
                     )
 
-                    timestamp = None
+                    timestamp = 0
                     
                     if pub_match:
                         try:
