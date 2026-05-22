@@ -23,18 +23,11 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
     async with semaphore:
         await asyncio.sleep(1)
 
-        story_url = (
-            f"https://www.tiktok.com/@{tiktok_user}/stories"
-        )
-
         story_ids = []
 
         for attempt in range(2):
-
             try:
-                story_ids = await get_tiktok_story(
-                    story_url
-                )
+                story_ids = await get_tiktok_story(tiktok_user)
                 break
 
             except Exception as e:
@@ -80,7 +73,7 @@ async def process_tiktok_story(name, accounts, cache, semaphore):
                 media_items.append(result) 
                 new_stories.append({
                     "id": story_id,
-                    "timestamp": result.get("create_time", 0)
+                    "timestamp": result["create_time"]
                 })
 
                 await asyncio.sleep(

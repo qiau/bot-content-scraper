@@ -48,7 +48,6 @@ async def load_proxies():
                 )
 
             except ValueError:
-
                 print(
                     f"❌ Format salah: {line}"
                 )
@@ -61,7 +60,6 @@ async def load_proxies():
         )
 
     except Exception as e:
-
         print(
             f"❌ Proxy load error: {e}"
         )
@@ -70,5 +68,4 @@ async def load_proxies():
 
 
 def get_proxies():
-
     return PROXIES

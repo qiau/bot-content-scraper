@@ -2,7 +2,7 @@ from html import unescape
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from src.utils.instagram_downloader import extract_instagram_data
-from src.utils.caption_utils import format_instagram_caption
+from src.utils.caption_utils import format_instagram_caption, format_instagram_story_caption
 from src.handlers.telegram_handler import (
     _send_admin_message,
     _send_photo,
@@ -10,7 +10,7 @@ from src.handlers.telegram_handler import (
     _send_media_group
 )
 
-async def process_instagram_post(url):
+async def process_manual_instagram(url):
 
     try:
         post = await extract_instagram_data(url)
@@ -41,7 +41,7 @@ async def process_instagram_post(url):
         or ""
     )
 
-    timestamp = None
+    timestamp = 0
 
     if date:
         dt = datetime.strptime(
@@ -66,14 +66,22 @@ async def process_instagram_post(url):
     # =====================
     # CAPTION
     # =====================
+    if "/stories/" in url:
+        caption = format_instagram_story_caption(
+            name,
+            instagram_user,
+            link,
+            timestamp = timestamp
+        )
 
-    caption = format_instagram_caption(
-        name,
-        instagram_user,
-        link,
-        timestamp = timestamp,
-        description = description
-    )
+    else:
+        caption = format_instagram_caption(
+            name,
+            instagram_user,
+            link,
+            timestamp = timestamp,
+            description = description
+        )
 
     # =====================
     # MEDIA GROUP

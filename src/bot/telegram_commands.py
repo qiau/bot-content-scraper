@@ -2,7 +2,7 @@ from src.handlers.telegram_handler import (
     _send_admin_message,
     is_admin
 )
-from src.handlers.instagram_post_handler import process_instagram_post
+from handlers.manual_instagram_handler import process_manual_instagram
 from src.utils.runtime_state import set_mode, is_running, set_upload_mode
 from src.utils.config_manager import update_account_config, get_account_config
 from src.utils.target_manager import add_target, update_target
@@ -23,7 +23,9 @@ async def handle_update(update):
         await _send_admin_message(
             "🤖 Bot siap\n\n"
             
-            "/post\n"
+            "Manual post:\n"
+            "/ig\n\n"
+
             "/start_all\n"
             "/stop_all\n\n"
 
@@ -47,20 +49,20 @@ async def handle_update(update):
             "/set_target\n"
         )
 
-    elif cmd.startswith("/post"):
+    elif cmd.startswith("/ig"):
         parts = text.split(
             maxsplit=1
         )
 
         if len(parts) != 2:
             await _send_admin_message(
-                "❌ Format:\n/post URL"
+                "❌ Format:\n/ig URL"
             )
             return
 
         url = parts[1].strip()
 
-        await process_instagram_post(url)
+        await process_manual_instagram(url)
 
     elif cmd == "/start_all":
 
