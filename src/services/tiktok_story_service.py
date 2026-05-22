@@ -1,7 +1,9 @@
 import asyncio
 import re
 
-async def get_tiktok_story(url):
+async def get_tiktok_story(username):
+    url = f"https://www.tiktok.com/@{username}/stories"
+
     process = await asyncio.create_subprocess_exec(
         "python3",
         "-m",
@@ -44,7 +46,7 @@ async def get_tiktok_story(url):
             continue
 
         match = re.search(
-            r"#(\d{18,20})",
+            r"#(\d+)",
             line
         )
 
