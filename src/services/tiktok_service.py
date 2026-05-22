@@ -1,12 +1,10 @@
 import yt_dlp
 import asyncio
-import aiohttp
-from html import unescape
 
 # =========================
 # 🔴 AMBIL VIDEO ID (yt_dlp)
 # =========================
-async def get_latest_tiktoks(username, limit):
+async def get_tiktok_post(username, limit):
     url = f"https://www.tiktok.com/@{username}"
 
     loop = asyncio.get_running_loop()
@@ -40,50 +38,3 @@ async def get_latest_tiktoks(username, limit):
             return []
 
     return await loop.run_in_executor(None, run_yt_dlp)
-
-
-# =========================
-# 🔵 TIKTOK DOWNLOADER API
-# =========================
-async def get_tiktok_video_url(tiktok_url):
-    api_url = f"https://www.tikwm.com/api/?url={tiktok_url}"
-
-    timeout = aiohttp.ClientTimeout(total=10)
-
-    try:
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.get(api_url) as res:
-                if res.status != 200:
-                    return None
-
-                data = await res.json()
-
-                if not data.get("data"):
-                    return None
-
-                d = data["data"]
-
-                if d.get("images"):
-                    return {
-                        "type": "image",
-                        "data": d["images"],
-                        "create_time": d.get("create_time"),
-                        "description": unescape(
-                            d.get("title", "")
-                        ).strip()
-                    }
-
-                if d.get("play"):
-                    return {
-                        "type": "video",
-                        "data": d["play"],
-                        "create_time": d.get("create_time"),
-                        "description": unescape(
-                            d.get("title", "")
-                        ).strip()
-                    }
-
-    except Exception as e:
-        print(f"Downloader error: {e}")
-
-    return None

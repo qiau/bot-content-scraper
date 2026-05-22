@@ -30,19 +30,28 @@ def save_cache(data, platform):
     os.replace(temp_file, cache_file)
 
 
-def update_cache(cache, username, new_ids, max_size=3):
-    user_cache = cache.setdefault(username, [])
+def update_cache(cache, username, new_items, max_size=3):
+    user_cache = cache.setdefault(username, {})
 
-    combined = new_ids + user_cache
+    for item in new_items:
 
-    seen = set()
-    unique = []
+        user_cache[
+            str(item["id"])
+        ] = int(item["timestamp"])
 
-    for x in combined:
-        if x not in seen:
-            unique.append(x)
-            seen.add(x)
+    # =====================================
+    # SORT TIMESTAMP
+    # TERBARU -> TERLAMA
+    # =====================================
 
-    cache[username] = unique[:max_size]
+    sorted_items = sorted(
+        user_cache.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    sorted_items = sorted_items[:max_size]
+
+    cache[username] = dict(sorted_items)
 
     return cache

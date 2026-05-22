@@ -21,7 +21,7 @@ def get_target_name(
             return name
     return instagram_user
 
-async def extract_instagram_post(url):
+async def extract_instagram_data(url):
     proc = await asyncio.create_subprocess_exec(
         "python3",
         "-m",

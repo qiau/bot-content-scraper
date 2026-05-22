@@ -1,15 +1,14 @@
 import asyncio
 import random
 
-from src.services.tiktok_service import (
-    get_latest_tiktoks,
-    get_tiktok_video_url
-)
+from src.services.tiktok_service import get_tiktok_post
+
 from src.handlers.telegram_handler import (
     send_message, send_video, send_media_group, send_admin_message
 )
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_tiktok_caption
+from src.utils.tiktok_downloader import extract_tiktok_data
 
 async def process_tiktok(name, accounts, cache, semaphore):
     tiktok_user = accounts.get("tiktok")
@@ -23,7 +22,7 @@ async def process_tiktok(name, accounts, cache, semaphore):
 
         for attempt in range(3):
             try:
-                videos = await get_latest_tiktoks(
+                videos = await get_tiktok_post(
                     tiktok_user,
                     limit=3
                 )
@@ -43,12 +42,11 @@ async def process_tiktok(name, accounts, cache, semaphore):
             print(f"{tiktok_user}: no data")
             return
 
-        user_cache = cache.get(tiktok_user,[])
-        latest_cached_id = max(
-            map(int, user_cache),
-            default=0
+        user_cache = cache.get(tiktok_user, {})
+        latest_cached_id = int(
+            next(iter(user_cache), 0)
         )
-        new_ids = []
+        new_items = []
 
         for vid in reversed(videos):
             # skip video lama
@@ -58,23 +56,30 @@ async def process_tiktok(name, accounts, cache, semaphore):
             link = f"https://www.tiktok.com/@{tiktok_user}/video/{vid}"
 
             try:
-                result = await get_tiktok_video_url(link)
+                result = await extract_tiktok_data(link)
+                if not result:
+                    continue
+                
             except Exception as e:
                 await send_admin_message(f"{tiktok_user}: gagal download {link}: {e}")
-                result = None
+                continue
+           
+            type = result["type"]
+            timestamp = result["create_time"]
+            description = result["description"]
 
             caption = format_tiktok_caption(
                 name, tiktok_user,
                 link,
-                result.get("create_time") if result else None,
-                result.get("description") if result else None
+                timestamp,
+                description
             )
 
             try:
-                if result and result.get("type") == "video":
+                if result and type == "video":
                     await send_video(result["data"], caption=caption, parse_mode="HTML")
 
-                elif result and result.get("type") == "image":
+                elif result and type == "image":
                     images = result["data"]
 
                     media_group = []
@@ -96,12 +101,15 @@ async def process_tiktok(name, accounts, cache, semaphore):
                 else:
                     await send_message(caption, parse_mode="HTML")
 
-                new_ids.append(vid)
+                new_items.append({
+                    "id": vid,
+                    "timestamp": timestamp
+                })
 
             except Exception as e:
                 await send_admin_message(f"{tiktok_user}: gagal kirim {link}: {e}")
 
             await asyncio.sleep(random.uniform(2, 3))
 
-        if new_ids:
-            update_cache(cache, tiktok_user, new_ids)
+        if new_items:
+            update_cache(cache, tiktok_user, new_items)

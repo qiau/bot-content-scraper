@@ -1,7 +1,7 @@
 from html import unescape
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from src.utils.instagram_downloader import extract_instagram_post
+from src.utils.instagram_downloader import extract_instagram_data
 from src.utils.caption_utils import format_instagram_caption
 from src.handlers.telegram_handler import (
     _send_admin_message,
@@ -13,7 +13,7 @@ from src.handlers.telegram_handler import (
 async def process_instagram_post(url):
 
     try:
-        post = await extract_instagram_post(url)
+        post = await extract_instagram_data(url)
     except Exception as e:
         error_msg = (
             f"[IG POST] ❌ extract error:\n\n"

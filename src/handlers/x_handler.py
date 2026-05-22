@@ -6,7 +6,7 @@ from src.handlers.telegram_handler import (
     send_message, send_photo, send_video, send_media_group
 )
 from src.utils.cache_storage import update_cache
-from src.utils.x_video_downloader import extract_media_urls
+from src.utils.x_video_downloader import extract_x_data
 from src.utils.caption_utils import format_x_caption
 
 async def process_x(name, accounts, cache, semaphore):
@@ -27,9 +27,7 @@ async def process_x(name, accounts, cache, semaphore):
                     x_user,
                     limit=3
                 )
-
-                if posts:
-                    break
+                break
 
             except Exception as e:
 
@@ -47,12 +45,11 @@ async def process_x(name, accounts, cache, semaphore):
             print(f"{x_user}: no data")
             return
 
-        user_cache = cache.get(x_user,[])
-        latest_cached_id = max(
-            map(int, user_cache),
-            default=0
+        user_cache = cache.get(x_user, {})
+        latest_cached_id = int(
+            next(iter(user_cache), 0)
         )
-        new_ids = []
+        new_items = []
 
         for post in reversed(posts):
             tweet_id = post["id"]
@@ -63,12 +60,15 @@ async def process_x(name, accounts, cache, semaphore):
             tweet_url = post["url"]
             images = post["images"]
             has_video = post["has_video"]
+            timestamp = post["timestamp"]
+            description = post["text"]
+
 
             caption = format_x_caption(
                 name, x_user,
                 tweet_url,
-                post.get("timestamp"),
-                post.get("text")
+                timestamp,
+                description
             )
 
             media_group = []
@@ -86,7 +86,7 @@ async def process_x(name, accounts, cache, semaphore):
                 media_group.append(item)
 
             if has_video:
-                videos, video_error, failed_count = extract_media_urls(tweet_url)
+                videos, video_error, failed_count = extract_x_data(tweet_url)
 
                 if video_error and not videos:
                     msg = (
@@ -100,7 +100,10 @@ async def process_x(name, accounts, cache, semaphore):
                         parse_mode="HTML"
                     )
 
-                    new_ids.append(tweet_id)
+                    new_items.append({
+                        "id": tweet_id,
+                        "timestamp": timestamp 
+                    })
                     continue
 
                 for v in videos:
@@ -140,12 +143,15 @@ async def process_x(name, accounts, cache, semaphore):
                 else:
                     await send_media_group(media_group)
 
-                new_ids.append(tweet_id)
+                new_items.append({
+                    "id": tweet_id, 
+                    "timestamp": timestamp
+                })
 
             except Exception as e:
                 print(f"{x_user}: gagal kirim {tweet_id}:", e)
 
             await asyncio.sleep(random.uniform(2, 3))
 
-        if new_ids:
-            update_cache(cache, x_user, new_ids)
+        if new_items:
+            update_cache(cache, x_user, new_items)
