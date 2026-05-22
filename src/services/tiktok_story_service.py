@@ -3,7 +3,9 @@ import re
 
 async def get_tiktok_story(url):
     process = await asyncio.create_subprocess_exec(
-        "gallery-dl",
+        "python3",
+        "-m",
+        "gallery_dl",
         "--simulate",
         url,
         stdout=asyncio.subprocess.PIPE,
