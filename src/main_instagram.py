@@ -20,22 +20,13 @@ def load_targets():
     with open("data/targets.json", "r") as f:
         return json.load(f)
     
-def load_config():
-    with open("data/config.json", "r") as f:
-        return json.load(f)
-
-def chunk_targets(targets, n):
-    items = list(targets.items())
-    random.shuffle(items)
-    return [items[i::n] for i in range(n)]
-
 async def main():
 
     if not is_running("instagram"):
         print("⛔ IG mode STOP (skip run)")
         return
     
-    delay = random.randint(0, 3600) 
+    delay = random.randint(0, 3) 
     await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
@@ -43,83 +34,92 @@ async def main():
     asyncio.create_task(telegram_worker())
 
     cache = load_cache("instagram")
-    TARGETS = load_targets()
-    IG_ACCOUNTS = load_config()
-  
-    if not IG_ACCOUNTS:
-        raise ValueError("❌ Tidak ada IG account")
+    targets = load_targets()
 
-    chunks = chunk_targets(TARGETS, len(IG_ACCOUNTS))
+    counter = 0
+    
+    for name, accounts in (
+        targets.items()
+    ):
 
-    should_stop_after_run = False
+        # stop from telegram
+        if not is_running(
+            "instagram"
+        ):
 
-    for i, chunk in enumerate(chunks):
-        if not is_running("instagram"):
-            print("⛔ Dihentikan sebelum mulai akun")
-            break
-
-        ig_account = IG_ACCOUNTS[i]
-
-        print(f"🚀 {ig_account['name']} mulai ({len(chunk)} target)")
-        
-        fail_count = 0
-        counter = 0
-
-        for name, accounts in chunk:
-            if not is_running("instagram"):
-                print("⛔ Dihentikan oleh Telegram")
-                break
-
-            result = await process_instagram(
-                name,
-                accounts,
-                cache,
-                ig_account,
-                proxy=None
+            print(
+                "⛔ Dihentikan"
             )
 
-            if result == "proxy_error":
-                fail_count += 1
+            break
 
-            elif result == "ig_error":
-                # IG error tidak dianggap proxy mati
-                print(f"⚠️ IG error pada {name}")
+        instagram_user = (
+            accounts.get(
+                "instagram"
+            )
+        )
 
-            else:
-                fail_count = 0
-            
-            # =========================
-            # 🔥 PROXY ERROR DETECT
-            # =========================
-            if fail_count >= 2:
-                msg = (
-                    f"🚨 {ig_account['name']} ERROR\n"
-                    "Proxy ditandai sebagai mati atau IG Error"
-                )
-                await _send_admin_message(msg)
-                should_stop_after_run = True
-                break
+        if not instagram_user:
+            continue
 
-            counter += 1
+        print(
+            f"📸 Checking "
+            f"{instagram_user}"
+        )
 
-            # 🔥 BREAK PATTERN (anti bot)
-            if counter % random.randint(4, 6) == 0:
-                sleep_time = random.uniform(120, 300)  # 2–5 menit
-                print(f"🛑 Cooldown panjang {sleep_time:.0f}s")
-                await asyncio.sleep(sleep_time)
+        try:
 
-            # 🔥 delay normal (lebih natural)
-            await asyncio.sleep(random.uniform(35, 60))
+            await process_instagram(
+                name,
+                accounts,
+                cache
+            )
 
-        cooldown = random.uniform(300, 600)  # 5–10 menit
-        print(f"😴 Cooldown antar akun {cooldown:.0f}s")
-        await asyncio.sleep(cooldown)
+        except Exception as e:
+
+            await _send_admin_message(
+                f"IG error "
+                f"{instagram_user}: {e}"
+            )
+
+        counter += 1
+
+        # =====================
+        # LONG BREAK
+        # =====================
+
+        if counter % random.randint(8, 12) == 0:
+
+            cooldown = random.uniform(
+                180,
+                420
+            )
+
+            print(
+                f"😴 Long cooldown "
+                f"{cooldown:.0f}s"
+            )
+
+            await asyncio.sleep(
+                cooldown
+            )
+
+        # =====================
+        # NORMAL DELAY
+        # =====================
+
+        else:
+
+            delay = random.uniform(
+                25,
+                60
+            )
+
+            await asyncio.sleep(
+                delay
+            )
 
     save_cache(cache, "instagram")
-
-    if should_stop_after_run:
-        await _send_admin_message("⛔ IG dihentikan (berlaku untuk run berikutnya)")
-        set_mode("instagram", "stopped")
 
     await telegram_queue.join()
     await close_telegram()

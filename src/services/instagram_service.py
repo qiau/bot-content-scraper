@@ -1,216 +1,134 @@
-import aiohttp
 import asyncio
+import instaloader
+import random
 
-def build_headers(ig_account):
-    sessionid = ig_account.get("sessionid")
-    csrftoken = ig_account.get("csrftoken")
+from src.services.instagram_loader import L
 
-    if not sessionid or not csrftoken:
-        raise ValueError("Cookie IG kosong")
-    
-    return {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
-        ),
-        "Accept": "*/*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.instagram.com/",
-        "X-Requested-With": "XMLHttpRequest",
-        "X-IG-App-ID": "936619743392459",
-        "Cookie": (
-            f"sessionid={sessionid}; "
-            f"csrftoken={csrftoken};"
-        )
-    }
 
-async def get_latest_posts(username, ig_account, proxy=None):
-
-    try:
-        headers = build_headers(ig_account)
-
-    except Exception as e:
-        print(f"[IG] {username} ❌ header error:", e)
-        return "ig_error"
-    
-    timeout = aiohttp.ClientTimeout(
-        total=30,
-        connect=10,
-        sock_read=20
+async def get_latest_posts(
+    username
+):
+    await asyncio.sleep(
+        random.uniform(5, 8)
     )
 
+    loop = asyncio.get_running_loop()
+
+    return await loop.run_in_executor(
+        None,
+        scrape_posts,
+        username
+    )
+
+
+def scrape_posts(username):
+
     try:
-        async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
 
-            # =========================
-            # 🔹 STEP 1: ambil user_id
-            # =========================
-            url = f"https://www.instagram.com/api/v1/users/web_profile_info/?username={username}"
+        profile = (
+            instaloader.Profile
+            .from_username(
+                L.context,
+                username
+            )
+        )
 
-            async with session.get(url, proxy=proxy) as res:
-                if res.status != 200:
-                    print(
-                        f"[IG] {username} ❌ user info status {res.status}"
-                    )
+        results = []
 
-                    # proxy / rate limit
-                    if res.status in [429, 502, 503, 504]:
-                        return "proxy_error"
+        for i, post in enumerate(
+            profile.get_posts()
+        ):
 
-                    return "ig_error"
+            if i >= 3:
+                break
 
-                try:
-                    data = await res.json()
+            media = []
 
-                except Exception:
-                    text = await res.text()
+            # =====================
+            # CAROUSEL
+            # =====================
 
-                    print(
-                        f"[IG] {username} ❌ invalid json user info"
-                    )
+            if post.typename == (
+                "GraphSidecar"
+            ):
 
-                    print(text[:300])
+                for node in (
+                    post.get_sidecar_nodes()
+                ):
 
-                    return "ig_error"
+                    # VIDEO
+                    if node.is_video:
 
-            if data.get("status") != "ok":
-                print(f"[IG] {username} ❌ user info error")
-                return "ig_error"
-
-            user = data.get("data", {}).get("user")
-
-            if not user:
-                return "ig_error"
-
-            user_id = user.get("id")
-
-            if not user_id:
-                return "ig_error"
-
-            # =========================
-            # 🔹 STEP 2: ambil feed
-            # =========================
-            feed_url = f"https://www.instagram.com/api/v1/feed/user/{user_id}/"
-
-            async with session.get(feed_url, proxy=proxy) as res:
-         
-                if res.status != 200:
-                    print(
-                        f"[IG] {username} ❌ feed status {res.status}"
-                    )
-
-                    if res.status == 429:
-                        return "proxy_error"
-
-                    if res.status in [502, 503, 504]:
-                        return "ig_error"
-
-                    return "ig_error"
-
-                try:
-                    feed_data = await res.json()
-
-                except Exception:
-                    text = await res.text()
-
-                    print(
-                        f"[IG] {username} ❌ invalid json feed"
-                    )
-
-                    print(text[:300])
-
-                    return "ig_error"
-
-            items = feed_data.get("items", [])
-
-            if not items:
-                print(f"[IG] {username} ⚠️ feed kosong")
-                return []
-
-            results = []
-
-            for item in items[:3]:
-                shortcode = item.get("code")
-
-                if not shortcode:
-                    continue
-
-                media = []
-
-                # =========================
-                # 🔥 PRIORITAS: CAROUSEL
-                # =========================
-                carousel = item.get("carousel_media") or item.get("carousel_media_extended")
-
-                if carousel:
-                    for m in carousel:
-                        if m.get("video_versions"):
-                            media.append({
-                                "type": "video",
-                                "url": m["video_versions"][0]["url"]
-                            })
-                        elif m.get("image_versions2"):
-                          
-                            candidates = (
-                                m["image_versions2"]
-                                .get("candidates", [])
-                            )
-
-                            if candidates:
-                                media.append({
-                                    "type": "image",
-                                    "url": candidates[0]["url"]
-                                })
-
-                # =========================
-                # 🎥 VIDEO
-                # =========================
-                elif item.get("video_versions"):
-                    media.append({
-                        "type": "video",
-                        "url": (
-                            item["video_versions"][0]["url"]
-                        )
-                    })
-
-                # =========================
-                # 🖼️ IMAGE
-                # =========================
-                elif item.get("image_versions2"):
-           
-                    candidates = (
-                        item["image_versions2"]
-                        .get("candidates", [])
-                    )
-
-                    if candidates:
                         media.append({
-                            "type": "image",
-                            "url": candidates[0]["url"]
+                            "type": "video",
+                            "url": (
+                                node.video_url
+                            )
                         })
 
-                if not media:
-                    continue
+                    # IMAGE
+                    else:
 
-                results.append({
-                    "shortcode": shortcode,
-                    "media": media
+                        media.append({
+                            "type": "image",
+                            "url": (
+                                node.display_url
+                            )
+                        })
+
+            # =====================
+            # SINGLE VIDEO
+            # =====================
+
+            elif post.is_video:
+
+                media.append({
+                    "type": "video",
+                    "url": post.video_url
                 })
 
-            print(f"[IG] {username} ✔️ ambil {len(results)} post")
+            # =====================
+            # SINGLE IMAGE
+            # =====================
 
-            return results
+            else:
 
-    except (
-        aiohttp.ClientProxyConnectionError,
-        asyncio.TimeoutError
-    ) as e:
+                media.append({
+                    "type": "image",
+                    "url": (
+                        post.url
+                    )
+                })
 
-        print(f"[IG] {username} ❌ proxy error:", e)
+            results.append({
+                "shortcode": (
+                    post.shortcode
+                ),
 
-        return "proxy_error"
-    
+                "timestamp": int(
+                    post.date_utc.timestamp()
+                ),
+
+                "description": (
+                    post.caption
+                    or ""
+                ),
+
+                "media": media
+            })
+
+        print(
+            f"[IG] {username} "
+            f"✅ {len(results)} post"
+        )
+
+        return results
+
     except Exception as e:
-        print(f"[IG] {username} ❌ error:", e)
-        return "ig_error"
+
+        print(
+            f"[IG] {username} "
+            f"❌ error: {e}"
+        )
+
+        return []

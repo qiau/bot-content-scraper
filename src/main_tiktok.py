@@ -34,11 +34,11 @@ async def main():
     post_cache = load_cache("tiktok_posts")
     story_cache = load_cache("tiktok_stories")
 
-    TARGETS = load_targets()
+    targets = load_targets()
 
     tasks = []
 
-    for name, accounts in TARGETS.items():
+    for name, accounts in targets.items():
 
         if not is_running("tiktok"):
             print("⛔ TikTok dihentikan")

@@ -52,10 +52,10 @@ async def main():
 
     cache = load_cache("x")
 
-    TARGETS = load_targets()
+    targets = load_targets()
     tasks = []
     
-    for name, accounts in TARGETS.items():
+    for name, accounts in targets.items():
 
         if not is_running("x"):
             print("⛔ X dihentikan")
