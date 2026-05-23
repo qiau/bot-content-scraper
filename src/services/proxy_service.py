@@ -1,3 +1,4 @@
+import asyncio
 import aiohttp
 import os
 
@@ -6,66 +7,80 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PROXY_API = (
-    os.getenv("PROXY_2")
-    if datetime.now().day >= 15
-    else os.getenv("PROXY_1")
-)
+if datetime.now().day >= 15:
+    PROXY_APIS = [
+        os.getenv("PROXY_2"),
+        os.getenv("PROXY_1")
+    ]
+
+else:
+    PROXY_APIS = [
+        os.getenv("PROXY_1"),
+        os.getenv("PROXY_2")
+    ]
 
 PROXIES = []
-
 
 async def load_proxies():
 
     global PROXIES
 
-    proxies = []
+    for proxy_api in PROXY_APIS:
+        if not proxy_api:
+            continue
 
-    try:
+        try:
+            async with aiohttp.ClientSession() as session:
 
-        async with aiohttp.ClientSession() as session:
+                async with session.get(proxy_api) as res:
 
-            async with session.get(PROXY_API) as res:
+                    text = await res.text()
 
-                text = await res.text()
+            proxies = []
 
-        for line in text.splitlines():
+            for line in text.splitlines():
 
-            line = line.strip()
+                line = line.strip()
 
-            if not line:
-                continue
+                if not line:
+                    continue
 
-            try:
+                try:
+                    ip, port, user, password = (
+                        line.split(":")
+                    )
 
-                ip, port, user, password = (
-                    line.split(":")
-                )
+                    proxies.append(
+                        f"http://{user}:{password}"
+                        f"@{ip}:{port}"
+                    )
 
-                proxies.append(
-                    f"http://{user}:{password}"
-                    f"@{ip}:{port}"
-                )
+                except ValueError:
+                    print(
+                        f"❌ Format salah: {line}"
+                    )
 
-            except ValueError:
-                print(
-                    f"❌ Format salah: {line}"
-                )
+            PROXIES = proxies
 
-        PROXIES = proxies
+            print(
+                f"✅ Loaded "
+                f"{len(PROXIES)} proxies"
+            )
 
-        print(
-            f"✅ Loaded "
-            f"{len(PROXIES)} proxies"
-        )
+            return
 
-    except Exception as e:
-        print(
-            f"❌ Proxy load error: {e}"
-        )
+        except Exception as e:
+            print(
+                f"❌ Failed {proxy_api}: {e}"
+            )
+            print(
+                "⏳ Retry proxy lain dalam 5 detik..."
+            )
 
-        PROXIES = []
+            await asyncio.sleep(5)
 
+    PROXIES = []
+    print("❌ Semua proxy API gagal")
 
 def get_proxies():
     return PROXIES
