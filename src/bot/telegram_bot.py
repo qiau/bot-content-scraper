@@ -4,7 +4,6 @@ import asyncio
 from dotenv import load_dotenv
 
 from src.bot.telegram_commands import handle_update
-from src.bot.telegram_documents import handle_document
 from src.handlers.telegram_handler import init_telegram
 
 load_dotenv()
@@ -44,7 +43,6 @@ async def run_bot():
 
                     try:
                         await handle_update(update)
-                        await handle_document(update, session, TOKEN)
                     except Exception as e:
                         print("❌ Handle error:", e)
 

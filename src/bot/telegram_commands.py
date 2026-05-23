@@ -3,8 +3,8 @@ from src.handlers.telegram_handler import (
     is_admin
 )
 from src.handlers.manual_instagram_handler import process_manual_instagram
-from src.utils.runtime_state import set_mode, is_running, set_upload_mode
-from src.utils.config_manager import update_account_config, get_account_config
+from src.utils.cookie_manager import save_cookie, load_cookie
+from src.utils.runtime_state import set_mode, is_running
 from src.utils.target_manager import add_target, update_target
 
 async def handle_update(update):
@@ -41,7 +41,6 @@ async def handle_update(update):
             "/stop_tiktok\n"
             "/status_tiktok\n\n"
 
-            "/set_cookies\n"
             "/set_ig\n"
             "/get_ig\n\n"
             
@@ -176,52 +175,64 @@ async def handle_update(update):
             f"{platform.upper()} Status:\n{status}"
         )   
 
-    elif cmd == "/set_cookies":
-        set_upload_mode("cookies", duration=600)
-
-        await _send_admin_message(
-            "📂 Upload file cookies.txt dalam 10 menit"
+    elif cmd.startswith("/set_ig"):
+        parts = text.split(
+            maxsplit=2
         )
 
-    elif cmd.startswith("/set_ig"):
-        parts = text.split()
-
-        if len(parts) != 4:
+        if len(parts) != 3:
             await _send_admin_message(
-                "❌ Format salah\nContoh:\n/set_ig acc1 sessionid csrftoken"
+                "❌ Format salah\n"
+                "Contoh:\n"
+                "/set_ig 1 <cookies>"
             )
             return
 
-        _, name, sessionid, csrftoken = parts
+        _, account_id, cookies_text = parts
 
-        ok = update_account_config(name, sessionid, csrftoken)
+        if account_id not in (
+            "1",
+            "2"
+        ):
+            await _send_admin_message(
+                "❌ Account hanya 1 atau 2"
+            )
+            return
+        
+        save_cookie(
+            account_id,
+            cookies_text
+        )
 
-        if ok:
-            await _send_admin_message(f"✅ {name} berhasil diupdate")
-        else:
-            await _send_admin_message(f"❌ Akun {name} tidak ditemukan")
+        await _send_admin_message(
+            f"✅ cookies_{account_id}.txt updated"
+        )
 
     elif cmd.startswith("/get_ig"):
         parts = text.split()
 
         if len(parts) != 2:
-            await _send_admin_message("❌ Format salah: /get_ig acc1")
+            await _send_admin_message(
+                "❌ Format salah\n"
+                "Contoh:\n"
+                "/get_ig 1"
+            )
             return
-
-        name = parts[1]
-        acc = get_account_config(name)
-
-        if not acc:
-            await _send_admin_message("❌ Akun tidak ditemukan")
-            return
-
-        msg = (
-            f"📄 {name}\n"
-            f"sessionid: {acc['sessionid'][:6]}...\n"
-            f"csrftoken: {acc['csrftoken'][:6]}..."
+        
+        account_id = parts[1]
+        cookies = load_cookie(
+            account_id
         )
 
-        await _send_admin_message(msg)
+        if not cookies:
+            await _send_admin_message(
+                "❌ Cookies tidak ditemukan"
+            )
+            return
+
+        await _send_admin_message(
+            cookies[:3000]
+        )
     
     elif cmd.startswith("/add_target"):
 
