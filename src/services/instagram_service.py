@@ -1,216 +1,188 @@
 import aiohttp
 import asyncio
+from http.cookiejar import MozillaCookieJar
+import traceback
 
-def build_headers(ig_account):
-    sessionid = ig_account.get("sessionid")
-    csrftoken = ig_account.get("csrftoken")
+def load_cookies(cookie_file):
 
-    if not sessionid or not csrftoken:
-        raise ValueError("Cookie IG kosong")
-    
+    jar = MozillaCookieJar()
+
+    jar.load(
+        cookie_file,
+        ignore_discard=True,
+        ignore_expires=True
+    )
+
+    cookies = {}
+
+    for cookie in jar:
+
+        cookies[
+            cookie.name
+        ] = cookie.value
+
+    return cookies
+
+def build_headers():
     return {
+
         "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/124.0.0.0 Safari/537.36"
+            "Instagram 275.0.0.27.98 Android "
+            "(33/13; 420dpi; 1080x2400; samsung; "
+            "SM-G991B; o1s; exynos2100)"
         ),
+
         "Accept": "*/*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.instagram.com/",
-        "X-Requested-With": "XMLHttpRequest",
-        "X-IG-App-ID": "936619743392459",
-        "Cookie": (
-            f"sessionid={sessionid}; "
-            f"csrftoken={csrftoken};"
+
+        "Accept-Language": (
+            "en-US,en;q=0.9"
+        ),
+
+        "X-IG-App-ID": (
+            "936619743392459"
         )
     }
 
-async def get_latest_posts(username, ig_account, proxy=None):
-
-    try:
-        headers = build_headers(ig_account)
-
-    except Exception as e:
-        print(f"[IG] {username} ❌ header error:", e)
-        return "ig_error"
+async def get_instagram_posts(username, user_id, session):
     
-    timeout = aiohttp.ClientTimeout(
-        total=30,
-        connect=10,
-        sock_read=20
-    )
+    feed_url = f"https://www.instagram.com/api/v1/feed/user/{user_id}/?count=3"
 
-    try:
-        async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
+    try:      
+        async with session.get(feed_url) as res:
+        
+            if res.status == 429:
+                print(f"[IG] {username} ❌ rate limit (429)")
+                return "rate_limit" 
 
-            # =========================
-            # 🔹 STEP 1: ambil user_id
-            # =========================
-            url = f"https://www.instagram.com/api/v1/users/web_profile_info/?username={username}"
-
-            async with session.get(url, proxy=proxy) as res:
-                if res.status != 200:
-                    print(
-                        f"[IG] {username} ❌ user info status {res.status}"
-                    )
-
-                    # proxy / rate limit
-                    if res.status in [429, 502, 503, 504]:
-                        return "proxy_error"
-
-                    return "ig_error"
-
-                try:
-                    data = await res.json()
-
-                except Exception:
-                    text = await res.text()
-
-                    print(
-                        f"[IG] {username} ❌ invalid json user info"
-                    )
-
-                    print(text[:300])
-
-                    return "ig_error"
-
-            if data.get("status") != "ok":
-                print(f"[IG] {username} ❌ user info error")
+            if res.status != 200:
+                print(f"[IG] {username} ❌ feed status {res.status}")
                 return "ig_error"
 
-            user = data.get("data", {}).get("user")
+            try:
+                feed_data = await res.json()
 
-            if not user:
+            except Exception:
+                text = await res.text()
+
+                print(
+                    f"[IG] {username} ❌ invalid json feed"
+                )
+
+                print(text[:300])
+
                 return "ig_error"
 
-            user_id = user.get("id")
+        items = feed_data.get("items", [])
+        print(
+            f"[IG] {username} total items: {len(items)}"
+        )
 
-            if not user_id:
-                return "ig_error"
+        if not items:
+            print(f"[IG] {username} ⚠️ feed kosong")
+            return []
+
+        results = []
+
+        for item in items[:3]:
+            shortcode = item.get("code")
+
+            if not shortcode:
+                continue
+
+            media = []
 
             # =========================
-            # 🔹 STEP 2: ambil feed
+            # 🔥 PRIORITAS: CAROUSEL
             # =========================
-            feed_url = f"https://www.instagram.com/api/v1/feed/user/{user_id}/"
+            carousel = item.get("carousel_media") or item.get("carousel_media_extended")
 
-            async with session.get(feed_url, proxy=proxy) as res:
-         
-                if res.status != 200:
-                    print(
-                        f"[IG] {username} ❌ feed status {res.status}"
-                    )
-
-                    if res.status == 429:
-                        return "proxy_error"
-
-                    if res.status in [502, 503, 504]:
-                        return "ig_error"
-
-                    return "ig_error"
-
-                try:
-                    feed_data = await res.json()
-
-                except Exception:
-                    text = await res.text()
-
-                    print(
-                        f"[IG] {username} ❌ invalid json feed"
-                    )
-
-                    print(text[:300])
-
-                    return "ig_error"
-
-            items = feed_data.get("items", [])
-
-            if not items:
-                print(f"[IG] {username} ⚠️ feed kosong")
-                return []
-
-            results = []
-
-            for item in items[:3]:
-                shortcode = item.get("code")
-
-                if not shortcode:
-                    continue
-
-                media = []
-
-                # =========================
-                # 🔥 PRIORITAS: CAROUSEL
-                # =========================
-                carousel = item.get("carousel_media") or item.get("carousel_media_extended")
-
-                if carousel:
-                    for m in carousel:
-                        if m.get("video_versions"):
-                            media.append({
-                                "type": "video",
-                                "url": m["video_versions"][0]["url"]
-                            })
-                        elif m.get("image_versions2"):
-                          
-                            candidates = (
-                                m["image_versions2"]
-                                .get("candidates", [])
-                            )
-
-                            if candidates:
-                                media.append({
-                                    "type": "image",
-                                    "url": candidates[0]["url"]
-                                })
-
-                # =========================
-                # 🎥 VIDEO
-                # =========================
-                elif item.get("video_versions"):
-                    media.append({
-                        "type": "video",
-                        "url": (
-                            item["video_versions"][0]["url"]
-                        )
-                    })
-
-                # =========================
-                # 🖼️ IMAGE
-                # =========================
-                elif item.get("image_versions2"):
-           
-                    candidates = (
-                        item["image_versions2"]
-                        .get("candidates", [])
-                    )
-
-                    if candidates:
+            if carousel:
+                for m in carousel:
+                    if m.get("video_versions"):
                         media.append({
-                            "type": "image",
-                            "url": candidates[0]["url"]
+                            "type": "video",
+                            "url": m["video_versions"][0]["url"]
                         })
+                    elif m.get("image_versions2"):
+                        
+                        candidates = (
+                            m["image_versions2"]
+                            .get("candidates", [])
+                        )
 
-                if not media:
-                    continue
+                        if candidates:
+                            media.append({
+                                "type": "image",
+                                "url": candidates[0]["url"]
+                            })
 
-                results.append({
-                    "shortcode": shortcode,
-                    "media": media
+            # =========================
+            # 🎥 VIDEO
+            # =========================
+            elif item.get("video_versions"):
+                media.append({
+                    "type": "video",
+                    "url": (
+                        item["video_versions"][0]["url"]
+                    )
                 })
 
-            print(f"[IG] {username} ✔️ ambil {len(results)} post")
+            # =========================
+            # 🖼️ IMAGE
+            # =========================
+            elif item.get("image_versions2"):
+        
+                candidates = (
+                    item["image_versions2"]
+                    .get("candidates", [])
+                )
 
-            return results
+                if candidates:
+                    media.append({
+                        "type": "image",
+                        "url": candidates[0]["url"]
+                    })
+
+            if not media:
+                continue
+
+            results.append({
+                "shortcode": shortcode,
+                "media": media,
+                "description": (
+                    (item.get("caption") or {}).get("text") or ""
+                ),
+                "timestamp": (
+                    item.get(
+                        "taken_at"
+                    )
+                )
+            })
+
+        print(
+            f"[IG] {username} "
+            f"✔️ "
+            f"{len(results)} posts"
+        )
+
+        return results
 
     except (
-        aiohttp.ClientProxyConnectionError,
+        aiohttp.ClientError,
         asyncio.TimeoutError
     ) as e:
+        print(
+            f"[IG] {username} "
+            f"❌ request error: {e}"
+        )
+        return "ig_error"
 
-        print(f"[IG] {username} ❌ proxy error:", e)
-
-        return "proxy_error"
-    
     except Exception as e:
-        print(f"[IG] {username} ❌ error:", e)
+        print(
+            f"[IG] {username} "
+            f"❌ unknown error: {e}"
+        )
+
+        traceback.print_exc()
+
         return "ig_error"

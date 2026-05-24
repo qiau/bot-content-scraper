@@ -5,7 +5,7 @@ from src.handlers.telegram_handler import (
 from src.handlers.manual_instagram_handler import process_manual_instagram
 from src.utils.cookie_manager import save_cookie, load_cookie
 from src.utils.runtime_state import set_mode, is_running
-from src.utils.target_manager import add_target, update_target
+from src.utils.target_manager import add_target, update_target, load_targets, rebuild_instagram_splits
 
 async def handle_update(update):
     message = update.get("message")
@@ -46,6 +46,7 @@ async def handle_update(update):
             
             "/add_target\n"
             "/set_target\n"
+            "/rebuild_targets"
         )
 
     elif cmd.startswith("/ig"):
@@ -292,4 +293,20 @@ async def handle_update(update):
         else:
             await _send_admin_message(
                 "❌ Member tidak ditemukan"
+            )
+    
+    elif cmd == "/rebuild_ig":
+        try:
+            data = load_targets()
+
+            rebuild_instagram_splits(
+                data
+            )
+            await _send_admin_message(
+                "✅ Instagram target splits rebuilt"
+            )
+
+        except Exception as e:
+            await _send_admin_message(
+                f"❌ Rebuild error:\n{e}"
             )

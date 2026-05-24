@@ -10,7 +10,7 @@ from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_tiktok_caption
 from src.utils.tiktok_downloader import extract_tiktok_data
 
-async def process_tiktok(name, accounts, cache, semaphore):
+async def process_tiktok_post(name, accounts, cache, semaphore):
     tiktok_user = accounts.get("tiktok")
     if not tiktok_user:
         return

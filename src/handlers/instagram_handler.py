@@ -1,22 +1,21 @@
-from src.services.instagram_service import get_latest_posts
+from src.services.instagram_service import get_instagram_posts
 from src.handlers.telegram_handler import (
     send_photo, send_video, send_media_group, send_message
 )
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_instagram_caption
 
-async def process_instagram(name, accounts, cache, ig_account, proxy=None):
+async def process_instagram_post(name, accounts, cache, session):
     instagram_user = accounts.get("instagram")
+    instagram_user_id = accounts.get("instagram_user_id")
 
     if not instagram_user:
         return "skip"
 
-    posts = await get_latest_posts(instagram_user, ig_account, proxy=proxy)
+    posts = await get_instagram_posts(instagram_user, instagram_user_id, session)
 
-    if posts == "proxy_error":
-        print(f"[IG] {instagram_user} ❌ proxy error")
-        return "proxy_error"
-
+    if posts == "rate_limit":
+        return "rate_limit"
     if posts == "ig_error":
         print(f"[IG] {instagram_user} ❌ IG error")
         return "ig_error"
@@ -25,10 +24,22 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
         print(f"[IG] {instagram_user} ⚠️ no post")
         return True
 
-    user_cache = cache.get(instagram_user, [])
-    new_ids = []
+    user_cache = cache.get(instagram_user, {})
+    latest_cached_timestamp = next(
+        iter(user_cache.values()), 0
+    )
+    new_items = []
 
-    for post in posts:
+    for post in reversed(posts):
+        post_timestamp = int(
+            post.get(
+                "timestamp",
+                0
+            )
+        )
+        if post_timestamp <= latest_cached_timestamp:
+            continue
+
         post_id = post.get("shortcode")
 
         if not post_id:
@@ -37,24 +48,28 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
         if post_id in user_cache:
             continue
 
-        if not post.get("media"):
+        media = post.get(
+            "media"
+        )
+
+        if not media:
             continue
 
         link = f"https://www.instagram.com/p/{post_id}/"
         
         caption = format_instagram_caption(
             name, instagram_user,
-            link, #"post_url": "https://www.instagram.com/p/DYOsEjPj9sm/",
-            post.get("post_date"), #"post_date": "2026-05-12 07:02:37",
-            post.get("description") #"description": "Nyobain shutter drag pakai Fuji XE5 + kit lens, flashnya Godox IT30 \nSettingan: \nShutter speed 1/15 \nF2.8\nISO auto\nFlash -1.7\n#shutterdrag #fujifilmphotography #slowshutter",
+            link, 
+            post.get("timestamp"),
+            post.get("description") 
         )
 
         media_group = []
 
-        for i, m in enumerate(post["media"]):
+        for i, item in enumerate(media):
             media_item = {
-                "type": "video" if m["type"] == "video" else "photo",
-                "media": m["url"]
+                "type": "video" if item["type"] == "video" else "photo",
+                "media": item["url"]
             }
 
             if i == 0:
@@ -75,7 +90,15 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
             else:
                 await send_media_group(media_group)
 
-            new_ids.append(post_id)
+            new_items.append({
+                "id": post_id,
+                "timestamp": (
+                    post.get(
+                        "timestamp"
+                    )
+                    or 0
+                )
+            })
 
         except Exception as e:
             print(f"[IG] {instagram_user} ❌ gagal kirim {post_id}:", e)
@@ -85,9 +108,15 @@ async def process_instagram(name, accounts, cache, ig_account, proxy=None):
             )
 
             await send_message(fallback_caption, parse_mode="HTML")
-            new_ids.append(post_id)
+            new_items.append({
+                "id": post_id,
+                "timestamp": (
+                    post.get(
+                        "timestamp"
+                    )
+                    or 0
+                )
+            })
 
-    if new_ids:
-        update_cache(cache, instagram_user, new_ids)
-    
-    return True
+    if new_items:
+        update_cache(cache, instagram_user, new_items)

@@ -7,7 +7,7 @@ from src.handlers.telegram_handler import (
     init_telegram,
     close_telegram,
 )
-from src.handlers.tiktok_handler import process_tiktok
+from src.handlers.tiktok_handler import process_tiktok_post
 from src.handlers.tiktok_story_handler import process_tiktok_story
 from src.utils.cache_storage import load_cache, save_cache
 from src.utils.telegram_queue import telegram_worker, telegram_queue
@@ -34,31 +34,31 @@ async def main():
     post_cache = load_cache("tiktok_posts")
     story_cache = load_cache("tiktok_stories")
 
-    TARGETS = load_targets()
+    targets = load_targets()
 
     tasks = []
 
-    for name, accounts in TARGETS.items():
+    for name, accounts in targets.items():
 
         if not is_running("tiktok"):
             print("⛔ TikTok dihentikan")
             break
 
         tasks.append(
-            process_tiktok(
-                name=name,
-                accounts=accounts,
-                cache=post_cache,
-                semaphore=semaphore
+            process_tiktok_post(
+                name,
+                accounts,
+                post_cache,
+                semaphore
             )
         )
 
         tasks.append(
             process_tiktok_story(
-                name=name,
-                accounts=accounts,
-                cache=story_cache,
-                semaphore=semaphore
+                name,
+                accounts,
+                story_cache,
+                semaphore
             )
         )
 
