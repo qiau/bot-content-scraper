@@ -295,7 +295,7 @@ async def handle_update(update):
                 "❌ Member tidak ditemukan"
             )
     
-    elif cmd == "/rebuild_ig":
+    elif cmd == "/rebuild_targets":
         try:
             data = load_targets()
 
