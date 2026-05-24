@@ -2,346 +2,404 @@
   "Jkt48 Official": {
     "x": "officialJKT48",
     "instagram": "jkt48",
+    "instagram_user_id": "3082798080",
     "tiktok": "jkt48.official",
     "birth_date": "2011-12-17"
   },
   "Jkt48 U16": {
     "instagram": "jkt48.u16",
+    "instagram_user_id": "24879742423",
     "tiktok": "jkt48.u16"
   },
   "Shani": {
     "x": "_shanindira",
     "instagram": "_shanindira",
+    "instagram_user_id": "3079067207",
     "tiktok": "_shanindira",
     "birth_date": "1998-10-05"
   },
   "Gracia": {
     "x": "_shaniagracia31",
     "instagram": "shaniagracia31",
+    "instagram_user_id": "3079069051",
     "tiktok": "_shaniagracia31",
     "birth_date": "1999-08-31"
   },
   "Zee": {
     "x": "_zeeasadel",
     "instagram": "zeeasadel",
+    "instagram_user_id": "9144760144",
     "tiktok": "_zeeasadel",
     "birth_date": "2004-05-16"
   },
   "Feni": {
     "x": "F_FeniJKT48",
     "instagram": "jkt48feni",
+    "instagram_user_id": "3079024445",
     "tiktok": "fenijkt48",
     "birth_date": "1999-01-16"
   },
   "Gita": {
     "x": "A_GitaJKT48",
     "instagram": "jkt48gita",
+    "instagram_user_id": "7950862752",
     "tiktok": "gitajkt48",
     "birth_date": "2001-06-30"
   },
   "Eli": {
     "x": "H_EliJKT48",
     "instagram": "jkt48.eli",
+    "instagram_user_id": "8971446779",
     "tiktok": "elijkt48",
     "birth_date": "2000-06-15"
   },
   "Freya": {
     "x": "Freya_JKT48",
     "instagram": "jkt48.freya",
+    "instagram_user_id": "9884975657",
     "tiktok": "freyajkt48",
     "birth_date": "2006-02-13"
   },
   "Christy": {
     "x": "A_ChristyJKT48",
     "instagram": "jkt48.christy",
+    "instagram_user_id": "9145176000",
     "tiktok": "christyjkt48",
     "birth_date": "2005-12-05"
   },
   "Olla": {
     "x": "F_OllaJKT48",
     "instagram": "jkt48.olla",
+    "instagram_user_id": "10113792466",
     "tiktok": "ollajkt48",
     "birth_date": "2005-02-26"
   },
   "Jessi": {
     "x": "C_JessiJKT48",
     "instagram": "jkt48.jessi",
+    "instagram_user_id": "10672013127",
     "tiktok": "jessijkt48",
     "birth_date": "2005-09-23"
   },
   "Muthe": {
     "x": "A_MutheJKT48",
     "instagram": "jkt48.muthe_",
+    "instagram_user_id": "8792364019",
     "tiktok": "muthejkt48",
     "birth_date": "2004-07-12"
   },
   "Oniel": {
     "x": "C_OnielJKT48",
     "instagram": "jkt48.oniel",
+    "instagram_user_id": "14671615574",
     "tiktok": "onieljkt48",
     "birth_date": "2002-07-26"
   },
   "Lulu": {
     "x": "A_LuluJKT48",
     "instagram": "jkt48.lulu",
+    "instagram_user_id": "14742425077",
     "tiktok": "lulu_jkt48",
     "birth_date": "2002-10-23"
   },
   "Fiony": {
     "x": "A_FionyJKT48",
     "instagram": "jkt48.fiony",
+    "instagram_user_id": "14997520514",
     "tiktok": "fionyjkt48",
     "birth_date": "2002-02-04"
   },
   "Indah": {
     "x": "C_IndahJKT48",
     "instagram": "jkt48indah_",
+    "instagram_user_id": "28733660397",
     "tiktok": "indahjkt48",
     "birth_date": "2001-03-20"
   },
   "Kathrina": {
     "x": "I_KathrinaJKT48",
     "instagram": "jkt48.kathrina",
+    "instagram_user_id": "28942049294",
     "tiktok": "kathrinjkt48",
     "birth_date": "2006-07-26"
   },
   "Marsha": {
     "x": "L_MarshaJKT48",
     "instagram": "jkt48.marsha",
+    "instagram_user_id": "29112442650",
     "tiktok": "marsha.jkt48",
     "birth_date": "2006-01-09"
   },
   "Lia": {
     "x": "AU_LiaJKT48",
     "instagram": "jkt48.aurellia_",
+    "instagram_user_id": "51662869963",
     "tiktok": "jkt48.aurellia_",
     "birth_date": "2002-10-29"
   },
   "Ella": {
     "x": "AM_EllaJKT48",
     "instagram": "jkt48.ella.a",
+    "instagram_user_id": "51296391646",
     "tiktok": "jkt48.ella.a",
     "birth_date": "2006-08-07"
   },
   "Lyn": {
     "x": "SE_LynJKT48",
     "instagram": "jkt48.lyn.s",
+    "instagram_user_id": "51306804718",
     "tiktok": "jkt48.lyn.s",
     "birth_date": "2001-09-13"
   },
   "Raisha": {
     "x": "SW_RaishaJKT48",
     "instagram": "jkt48.raisha.s",
+    "instagram_user_id": "51292071924",
     "tiktok": "jkt48.raisha.s",
     "birth_date": "2007-11-11"
   },
   "Alya": {
     "x": "AA_AlyaJKT48",
     "instagram": "jkt48.alya_",
+    "instagram_user_id": "56089447105",
     "tiktok": "alyajkt48",
     "birth_date": "2006-08-26"
   },
   "Anindya": {
     "x": "AR_AnindyaJKT48",
     "instagram": "jkt48.anindya_",
+    "instagram_user_id": "56472271647",
     "tiktok": "anindyajkt48",
     "birth_date": "2005-10-18"
   },
   "Cathy": {
     "x": "N_CathyJKT48",
     "instagram": "jkt48.cathy",
+    "instagram_user_id": "56437909652",
     "tiktok": "cathyjkt48",
     "birth_date": "2009-05-28"
   },
   "Elin": {
     "x": "Elin_JKT48",
     "instagram": "jkt48.elin_",
+    "instagram_user_id": "56084727697",
     "tiktok": "elinjkt48",
     "birth_date": "2007-04-09"
   },
   "Chelsea": {
     "x": "DC_ChelseaJKT48",
     "instagram": "jkt48.chelsea.d",
+    "instagram_user_id": "60806566287",
     "tiktok": "_chelseajkt48",
     "birth_date": "2009-12-23"
   },
   "Cynthia": {
     "x": "Y_CynthiaJKT48",
     "instagram": "jkt48.cynthia",
+    "instagram_user_id": "56463179512",
     "tiktok": "cynthiajkt48",
     "birth_date": "2003-11-22"
   },
   "Danella": {
     "x": "Danella_JKT48",
     "instagram": "jkt48.danella",
+    "instagram_user_id": "56436245861",
     "tiktok": "danellajkt48",
     "birth_date": "2005-12-16"
   },
   "Daisy": {
     "x": "Daisy_JKT48",
     "instagram": "jkt48.daisy",
+    "instagram_user_id": "56468714778",
     "tiktok": "daisyjkt48",
     "birth_date": "2005-12-16"
   },
   "Gendis": {
     "x": "Gendis_JKT48",
     "instagram": "jkt48.gendis",
+    "instagram_user_id": "56135666678",
     "tiktok": "gendisjkt48",
     "birth_date": "2010-06-23"
   },
   "Gracie": {
     "x": "Gracie_JKT48",
     "instagram": "jkt48.gracie",
+    "instagram_user_id": "56427487233",
     "tiktok": "graciejkt48",
     "birth_date": "2007-10-18"
   },
   "Greesel": {
     "x": "Greesel_JKT48",
     "instagram": "jkt48.greesel",
+    "instagram_user_id": "56428863043",
     "tiktok": "greeseljkt48",
     "birth_date": "2006-01-10"
   },
   "Michie": {
     "x": "Michie_JKT48",
     "instagram": "jkt48.michie_",
+    "instagram_user_id": "56513469431",
     "tiktok": "michiejkt48",
     "birth_date": "2009-04-22"
   },
   "Aralie": {
     "x": "Aralie_JKT48",
     "instagram": "jkt48.aralie",
+    "instagram_user_id": "62379322098",
     "tiktok": "jkt48.aralie",
     "birth_date": "2008-08-06"
   },
   "Delynn": {
     "x": "Delynn_JKT48",
     "instagram": "jkt48.delynn",
+    "instagram_user_id": "62839331181",
     "tiktok": "jkt48.delynn",
     "birth_date": "2007-09-01"
   },
   "Lana": {
     "x": "AR_LanaJKT48",
     "instagram": "jkt48.lana.a",
+    "instagram_user_id": "62789927836",
     "tiktok": "jkt48.lana",
     "birth_date": "2006-09-14"
   },
   "Erine": {
     "x": "CErine_JKT48",
     "instagram": "jkt48.erine",
+    "instagram_user_id": "62837867436",
     "tiktok": "jkt48.erine_",
     "birth_date": "2007-08-21"
   },
   "Fritzy": {
     "x": "RFritzy_JKT48",
     "instagram": "jkt48.fritzy.r",
+    "instagram_user_id": "62793959585",
     "tiktok": "jkt48.fritzy",
     "birth_date": "2008-07-28"
   },
   "Lily": {
     "x": "Lily_JKT48",
     "instagram": "jkt48.lily_",
+    "instagram_user_id": "62798039169",
     "tiktok": "jkt48.lily",
     "birth_date": "2007-10-19"
   },
   "Trisha": {
     "x": "JTrisha_JKT48",
     "instagram": "jkt48.trisha",
+    "instagram_user_id": "63369176393",
     "tiktok": "jkt48.trisha",
     "birth_date": "2011-02-16"
   },
   "Kimmy": {
     "x": "Kimmy_JKT48",
     "instagram": "jkt48.kimmy",
+    "instagram_user_id": "62971997401",
     "tiktok": "jkt48.kimmy",
     "birth_date": "2010-03-08"
   },
   "Nala": {
     "x": "Nala_JKT48",
     "instagram": "jkt48.nala",
+    "instagram_user_id": "63367504599",
     "tiktok": "jkt48.nala",
     "birth_date": "2008-09-01"
   },
   "Ribka": {
     "x": "Ribka_JKT48",
     "instagram": "jkt48.ribka",
+    "instagram_user_id": "62846082488",
     "tiktok": "jkt48.ribka",
     "birth_date": "2009-01-13"
   },
   "Oline": {
     "x": "M_OlineJKT48",
     "instagram": "jkt48.oline",
+    "instagram_user_id": "63140775119",
     "tiktok": "jkt48.oline",
     "birth_date": "2007-11-03"
   },
   "Nachia": {
     "x": "Nachia_JKT48",
     "instagram": "jkt48.nachia.t",
+    "instagram_user_id": "62954143386",
     "tiktok": "jkt48.nachia",
     "birth_date": "2009-10-16"
   },
   "Nayla": {
     "x": "SNayla_JKT48",
     "instagram": "jkt48.nayla.s",
+    "instagram_user_id": "62967333855",
     "tiktok": "jkt48.nayla",
     "birth_date": "2007-06-18"
   },
   "Levi": {
     "x": "Levi_JKT48",
     "instagram": "jkt48.levi",
+    "instagram_user_id": "62975221284",
     "tiktok": "jkt48.levi",
     "birth_date": "2009-01-24"
   },
   "Virgi": {
     "x": "A_VirgiJKT48",
     "instagram": "virgi.jkt48",
+    "instagram_user_id": "69784158514",
     "tiktok": "jkt48.virgi",
     "birth_date": "2010-08-06"
   },
   "Auwia": {
     "x": "Auwia_JKT48",
     "instagram": "auwia.jkt48",
+    "instagram_user_id": "70009098171",
     "tiktok": "jkt48.auwia",
     "birth_date": "2007-07-14"
   },
   "Rilly": {
     "x": "Rilly_JKT48",
     "instagram": "rilly.jkt48_",
+    "instagram_user_id": "70221680537",
     "tiktok": "jkt48.rilly",
     "birth_date": "2010-04-01"
   },
   "Giaa": {
     "x": "Giaa_JKT48",
     "instagram": "giaa.jkt48",
+    "instagram_user_id": "70362387058",
     "tiktok": "giaa.jkt48",
     "birth_date": "2008-07-01"
   },
   "Maira": {
     "x": "Maira_JKT48",
     "instagram": "maira.jkt48",
+    "instagram_user_id": "69788062152",
     "tiktok": "jkt48.maira",
     "birth_date": "2011-08-13"
   },
   "Ekin": {
     "x": "Ekin_JKT48",
     "instagram": "ekin.jkt48",
+    "instagram_user_id": "70344549914",
     "tiktok": "jkt48.ekin",
     "birth_date": "2009-07-09"
   },
   "Jemima": {
     "x": "JE_JemimaJKT48",
     "instagram": "jemima.jkt48",
+    "instagram_user_id": "69798980755",
     "tiktok": "jkt48.jemima",
     "birth_date": "2009-11-09"
   },
   "Mikaela": {
     "x": "M_MikaelaJKT48",
     "instagram": "mikaela.jkt48",
+    "instagram_user_id": "70338103298",
     "tiktok": "jkt48.mikaela",
     "birth_date": "2007-12-15"
   },
   "Intan": {
     "x": "N_IntanJKT48",
     "instagram": "intan.jkt48",
+    "instagram_user_id": "70353580199",
     "tiktok": "jkt48.intan",
     "birth_date": "2006-02-24"
   },
@@ -363,6 +421,7 @@
   "Heidi": {
     "x": "Heidi_JKT48",
     "instagram": "heidi.jkt48",
+    "instagram_user_id": "48746614691",
     "tiktok": "jkt48.heidi__",
     "birth_date": "2008-08-27"
   },
