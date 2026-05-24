@@ -60,7 +60,7 @@ async def main():
         print("⛔ IG mode STOP (skip run)")
         return
     
-    delay = random.randint(0, 60) 
+    delay = random.randint(10, 60) 
     await asyncio.sleep(delay)
     
     await init_telegram(os.getenv("TELEGRAM_TOKEN_IG"))
@@ -114,92 +114,75 @@ async def main():
         for name, accounts in (
             targets.items()
         ):
-            try:
-                if not is_running(
-                    "instagram"
-                ):
-                    print(
-                        "⛔ Dihentikan"
-                    )
-                    await _send_admin_message("⛔ IG scraper dihentikan manual")
-                    break
-
-                post_result = await process_instagram_post(
-                    name,
-                    accounts,
-                    post_cache,
-                    session
-                )
-                
-                await asyncio.sleep(random.uniform(2,5))
-
-                story_result = await process_instagram_story(
-                    name,
-                    accounts,
-                    story_cache,
-                    session
-                )
-
-                if (
-                    post_result == "rate_limit"
-                    or story_result == "rate_limit"
-                ):
-                    fail_count += 1
-                    await _send_admin_message(
-                        f"⚠️ Rate limit Instagram\n"
-                        f"Target: {name}\n"
-                        f"Fail count: {fail_count}"
-                    )
-                    print("😴 Rate limit cooldown 1 menit...")
-                    await asyncio.sleep(60)
-
-                elif (
-                    post_result == "ig_error"
-                    or story_result == "ig_error"
-                ):
-                    print(
-                        f"⚠️ IG error "
-                        f"{name}"
-                    )
-
-                elif post_result == "skip":
-                    await _send_admin_message(
-                        f"Target: {name}\n"
-                        f"di skip karena tidak ada username IG"
-                    )
-                    pass
-
-                else:
-                    fail_count = 0
-
-                if fail_count >= 2:
-                    await _send_admin_message(
-                        f"🚨 IG account "
-                        f"{account_id} error"
-                    )
-
-                    should_stop_after_run = True
-
-                    break
-
-                sleep_time = random.uniform(35,90)
-                await asyncio.sleep(sleep_time)
-                
-            except Exception as e:
+            if not is_running(
+                "instagram"
+            ):
                 print(
-                    f"[IG] {name} "
-                    f"❌ fatal error: {e}"
+                    "⛔ Dihentikan"
                 )
+                await _send_admin_message("⛔ IG scraper dihentikan manual")
+                break
 
-                await _send_admin_message(
-                    f"🚨 IG fatal error\n"
-                    f"Target: {name}\n"
-                    f"Error: {e}"
-                )
+            post_result = await process_instagram_post(
+                name,
+                accounts,
+                post_cache,
+                session
+            )
+            
+            await asyncio.sleep(random.uniform(2,5))
 
+            story_result = await process_instagram_story(
+                name,
+                accounts,
+                story_cache,
+                session
+            )
+
+            if (
+                post_result == "rate_limit"
+                or story_result == "rate_limit"
+            ):
                 fail_count += 1
+                await _send_admin_message(
+                    f"⚠️ Rate limit Instagram\n"
+                    f"Target: {name}\n"
+                    f"Fail count: {fail_count}"
+                )
+                print("😴 Rate limit cooldown 1 menit...")
+                await asyncio.sleep(60)
 
-                continue
+            elif (
+                post_result == "ig_error"
+                or story_result == "ig_error"
+            ):
+                print(
+                    f"⚠️ IG error "
+                    f"{name}"
+                )
+
+            elif post_result == "skip":
+                await _send_admin_message(
+                    f"Target: {name}\n"
+                    f"di skip karena tidak ada username IG"
+                )
+                pass
+
+            else:
+                fail_count = 0
+
+            if fail_count >= 2:
+                await _send_admin_message(
+                    f"🚨 IG account "
+                    f"{account_id} error"
+                )
+
+                should_stop_after_run = True
+
+                break
+
+            sleep_time = random.uniform(35,90)
+            await asyncio.sleep(sleep_time)
 
     save_cache(post_cache, "instagram_posts")
     save_cache(story_cache, "instagram_stories")
