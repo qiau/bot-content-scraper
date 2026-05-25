@@ -130,7 +130,7 @@ async def main():
                 session
             )
             
-            await asyncio.sleep(random.uniform(2,5))
+            await asyncio.sleep(random.uniform(5,8))
 
             story_result = await process_instagram_story(
                 name,
