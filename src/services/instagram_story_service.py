@@ -29,11 +29,9 @@ async def get_instagram_story(
                 return "ig_error"
 
             try:
-
                 data = await res.json()
 
             except Exception:
-
                 text = await res.text()
 
                 print(
@@ -55,7 +53,6 @@ async def get_instagram_story(
         )
 
         if not reel:
-
             print(
                 f"[IG STORY] {username} "
                 f"⚠️ no reel"
@@ -85,6 +82,12 @@ async def get_instagram_story(
         results = []
 
         for item in items:
+            if (
+                item.get("media_share")
+                or item.get("story_feed_media")
+                or item.get("reshared_story_media_author")
+            ):
+                continue
 
             story_id = item.get("id")
 
@@ -100,11 +103,8 @@ async def get_instagram_story(
             if item.get(
                 "video_versions"
             ):
-
                 media.append({
-
                     "type": "video",
-
                     "url": (
                         item["video_versions"][0]["url"]
                     )
@@ -117,7 +117,6 @@ async def get_instagram_story(
             elif item.get(
                 "image_versions2"
             ):
-
                 candidates = (
                     (
                         item.get(
@@ -132,11 +131,8 @@ async def get_instagram_story(
                 )
 
                 if candidates:
-
                     media.append({
-
                         "type": "image",
-
                         "url": (
                             candidates[0]["url"]
                         )
@@ -146,13 +142,10 @@ async def get_instagram_story(
                 continue
 
             results.append({
-
                 "story_id": str(
                     story_id
                 ),
-
                 "media": media,
-
                 "timestamp": int(
                     item.get(
                         "taken_at",
