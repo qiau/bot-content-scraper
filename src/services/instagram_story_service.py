@@ -71,7 +71,6 @@ async def get_instagram_story(
         )
 
         if not items:
-
             print(
                 f"[IG STORY] {username} "
                 f"⚠️ no story"

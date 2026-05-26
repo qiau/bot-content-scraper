@@ -1,7 +1,7 @@
 import json
 import asyncio
 
-COOKIE_FILE = "data/cookies/cookies.txt"
+COOKIE_FILE = "data/cookies/cookies_3.txt"
 
 TARGETS_FILE = "data/targets.json"
 

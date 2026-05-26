@@ -192,11 +192,10 @@ async def handle_update(update):
         _, account_id, cookies_text = parts
 
         if account_id not in (
-            "1",
-            "2"
+            "1", "2", "3"
         ):
             await _send_admin_message(
-                "❌ Account hanya 1 atau 2"
+                "❌ Account hanya 1, 2, 3"
             )
             return
         

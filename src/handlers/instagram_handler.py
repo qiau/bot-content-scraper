@@ -1,7 +1,5 @@
 from src.services.instagram_service import get_instagram_posts
-from src.handlers.telegram_handler import (
-    send_photo, send_video, send_media_group, send_message
-)
+from src.handlers.telegram_handler import send_photo, send_video, send_media_group, send_message
 from src.utils.cache_storage import update_cache
 from src.utils.caption_utils import format_instagram_caption
 
@@ -14,12 +12,28 @@ async def process_instagram_post(name, accounts, cache, session):
 
     posts = await get_instagram_posts(instagram_user, instagram_user_id, session)
 
+    # =========================
+    # SERVICE ERROR
+    # =========================
+
     if posts == "rate_limit":
         return "rate_limit"
+
+    if posts == "auth_error":
+        return "auth_error"
+
     if posts == "ig_error":
-        print(f"[IG] {instagram_user} ❌ IG error")
+
+        print(
+            f"[IG] {instagram_user} "
+            f"❌ IG error"
+        )
+
         return "ig_error"
 
+    # =========================
+    # EMPTY
+    # =========================
     if not posts:
         print(f"[IG] {instagram_user} ⚠️ no post")
         return True
@@ -28,19 +42,15 @@ async def process_instagram_post(name, accounts, cache, session):
     latest_cached_timestamp = next(
         iter(user_cache.values()), 0
     )
+
     new_items = []
 
     for post in reversed(posts):
-        post_timestamp = int(
-            post.get(
-                "timestamp",
-                0
-            )
-        )
-        if post_timestamp <= latest_cached_timestamp:
+        timestamp = post.get("timestamp")
+        if timestamp <= latest_cached_timestamp:
             continue
 
-        post_id = post.get("shortcode")
+        post_id = post.get("id")
 
         if not post_id:
             continue
@@ -60,7 +70,7 @@ async def process_instagram_post(name, accounts, cache, session):
         caption = format_instagram_caption(
             name, instagram_user,
             link, 
-            post.get("timestamp"),
+            timestamp,
             post.get("description") 
         )
 
@@ -92,12 +102,7 @@ async def process_instagram_post(name, accounts, cache, session):
 
             new_items.append({
                 "id": post_id,
-                "timestamp": (
-                    post.get(
-                        "timestamp"
-                    )
-                    or 0
-                )
+                "timestamp": timestamp
             })
 
         except Exception as e:
@@ -110,13 +115,10 @@ async def process_instagram_post(name, accounts, cache, session):
             await send_message(fallback_caption, parse_mode="HTML")
             new_items.append({
                 "id": post_id,
-                "timestamp": (
-                    post.get(
-                        "timestamp"
-                    )
-                    or 0
-                )
+                "timestamp": timestamp
             })
 
     if new_items:
         update_cache(cache, instagram_user, new_items)
+
+    return True

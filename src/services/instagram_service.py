@@ -4,9 +4,7 @@ from http.cookiejar import MozillaCookieJar
 import traceback
 
 def load_cookies(cookie_file):
-
     jar = MozillaCookieJar()
-
     jar.load(
         cookie_file,
         ignore_discard=True,
@@ -14,9 +12,7 @@ def load_cookies(cookie_file):
     )
 
     cookies = {}
-
     for cookie in jar:
-
         cookies[
             cookie.name
         ] = cookie.value
@@ -25,19 +21,15 @@ def load_cookies(cookie_file):
 
 def build_headers():
     return {
-
         "User-Agent": (
             "Instagram 275.0.0.27.98 Android "
             "(33/13; 420dpi; 1080x2400; samsung; "
             "SM-G991B; o1s; exynos2100)"
         ),
-
         "Accept": "*/*",
-
         "Accept-Language": (
             "en-US,en;q=0.9"
         ),
-
         "X-IG-App-ID": (
             "936619743392459"
         )
@@ -147,15 +139,15 @@ async def get_instagram_posts(username, user_id, session):
                 continue
 
             results.append({
-                "shortcode": shortcode,
+                "id": shortcode,
                 "media": media,
                 "description": (
                     (item.get("caption") or {}).get("text") or ""
                 ),
-                "timestamp": (
+                "timestamp": int(
                     item.get(
                         "taken_at"
-                    )
+                    ) or 0
                 )
             })
 

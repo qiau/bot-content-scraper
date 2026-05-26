@@ -9,7 +9,6 @@ def get_mode_file(platform):
     )
 
 def is_running(platform):
-
     mode_file = get_mode_file(platform)
 
     try:
@@ -21,7 +20,6 @@ def is_running(platform):
 
 
 def set_mode(platform, mode):
-
     os.makedirs(RUNTIME_DIR, exist_ok=True)
 
     mode_file = get_mode_file(platform)
@@ -31,15 +29,13 @@ def set_mode(platform, mode):
 
 
 def get_instagram_account_file():
-
     return os.path.join(
         RUNTIME_DIR,
         "instagram_account.txt"
     )
 
 
-def get_next_instagram_account():
-
+def get_next_instagram_account(total_accounts):
     os.makedirs(
         RUNTIME_DIR,
         exist_ok=True
@@ -71,20 +67,17 @@ def get_next_instagram_account():
             account_file,
             "r"
         ) as f:
-
-            current = (
-                f.read()
-                .strip()
+            current = int(
+                f.read().strip()
             )
 
     except:
         current = "1"
 
-    next_account = (
-        "2"
-        if current == "1"
-        else "1"
-    )
+    next_account = current + 1
+
+    if next_account > total_accounts:
+        next_account = 1
 
     with open(
         account_file,
@@ -92,14 +85,13 @@ def get_next_instagram_account():
     ) as f:
 
         f.write(
-            next_account
+            str(next_account)
         )
 
     return current
 
 
 def get_batch_file():
-
     return os.path.join(
         RUNTIME_DIR,
         "instagram_batch.txt"
@@ -108,7 +100,6 @@ def get_batch_file():
 def get_next_instagram_batch(
     total_batches
 ):
-
     os.makedirs(
         RUNTIME_DIR,
         exist_ok=True
