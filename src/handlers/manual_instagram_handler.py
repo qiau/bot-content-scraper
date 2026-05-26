@@ -3,12 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from src.utils.instagram_downloader import extract_instagram_data
 from src.utils.caption_utils import format_instagram_caption, format_instagram_story_caption
-from src.handlers.telegram_handler import (
-    _send_admin_message,
-    _send_photo,
-    _send_video,
-    _send_media_group
-)
+from src.handlers.telegram_handler import _send_admin_message, _send_photo, _send_video, _send_media_group
 
 async def process_manual_instagram(url):
 

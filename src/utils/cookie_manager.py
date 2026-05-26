@@ -4,9 +4,7 @@ import tempfile
 
 COOKIE_DIR = "data/cookies"
 
-
 def get_cookie_path(account_id):
-
     return (
         f"{COOKIE_DIR}/"
         f"cookies_{account_id}.txt"
@@ -14,11 +12,9 @@ def get_cookie_path(account_id):
 
 
 def normalize_cookie_text(text):
-
     lines = []
 
     for line in text.splitlines():
-
         line = line.strip()
 
         if not line:
@@ -26,9 +22,7 @@ def normalize_cookie_text(text):
 
         # comment/header tetap
         if line.startswith("#"):
-
             lines.append(line)
-
             continue
 
         # split maksimal 7 field
@@ -44,7 +38,6 @@ def normalize_cookie_text(text):
 
         # convert jadi TAB-separated
         fixed_line = "\t".join(parts)
-
         lines.append(fixed_line)
 
     return "\n".join(lines)
