@@ -8,8 +8,7 @@ import shutil
 TARGETS_PATH = "data/targets.json"
 SPLIT_DIR = "data/target_splits"
 
-BATCH_SIZE = 10
-
+BATCH_SIZE = 4
 
 def load_targets():
 
