@@ -153,29 +153,37 @@ def rebuild_instagram_splits(
         f"{total_batches} IG splits"
     )
 
-def add_target(name, platform, username):
-
+def add_target(
+    name,
+    x_username,
+    instagram_username,
+    instagram_user_id,
+    tiktok_username,
+    birth_date
+):
     data = load_targets()
-
-    if name not in data:
-        data[name] = {}
-
-    data[name][platform] = username
-
+    data[name] = {
+        "x": x_username,
+        "instagram": (
+            instagram_username
+        ),
+        "instagram_user_id": (
+            instagram_user_id
+        ),
+        "tiktok": (
+            tiktok_username
+        ),
+        "birth_date": (
+            birth_date
+        )
+    }
     save_targets(data)
-
     return True
 
-
-def update_target(name, platform, username):
-
+def delete_target(name):
     data = load_targets()
-
     if name not in data:
         return False
-
-    data[name][platform] = username
-
+    del data[name]
     save_targets(data)
-
     return True

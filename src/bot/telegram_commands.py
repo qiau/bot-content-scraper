@@ -5,7 +5,7 @@ from src.handlers.telegram_handler import (
 from src.handlers.manual_instagram_handler import process_manual_instagram
 from src.utils.cookie_manager import save_cookie, load_cookie
 from src.utils.runtime_state import set_mode, is_running
-from src.utils.target_manager import add_target, update_target, load_targets, rebuild_instagram_splits
+from src.utils.target_manager import add_target, delete_target, load_targets, rebuild_instagram_splits
 
 async def handle_update(update):
     message = update.get("message")
@@ -45,8 +45,8 @@ async def handle_update(update):
             "/get_ig\n\n"
             
             "/add_target\n"
-            "/set_target\n"
-            "/rebuild_targets"
+            "/delete_target\n"
+            "/split_targets"
         )
 
     elif cmd.startswith("/ig"):
@@ -235,58 +235,86 @@ async def handle_update(update):
         )
     
     elif cmd.startswith("/add_target"):
-
         parts = text.split()
 
-        if len(parts) != 4:
-
+        if len(parts) != 7:
             await _send_admin_message(
-                "Format:\n"
-                "/add_target Nama platform username"
-            )
+                "Format:\n\n"
+                "/add_target "
+                "Nama "
+                "x_username "
+                "ig_username "
+                "ig_user_id "
+                "tiktok_username "
+                "birth_date\n\n"
 
+                "Format tanggal:\n"
+                "YYYY-MM-DD\n\n"
+
+                "Contoh:\n"
+                "/add_target "
+                "Jemima "
+                "JE_JemimaJKT48 "
+                "jemima.jkt48 "
+                "69798980755 "
+                "jkt48.jemima "
+                "2009-11-09"
+            )
             return
 
-        _, name, platform, username = parts
-
-        add_target(
+        (
+            _,
             name,
-            platform,
-            username
-        )
+            x_username,
+            instagram_username,
+            instagram_user_id,
+            tiktok_username,
+            birth_date
+        ) = parts
 
-        await _send_admin_message(
-            f"✅ Target ditambahkan\n\n"
-            f"{name}\n"
-            f"{platform}: {username}"
-        )
-
-    elif cmd.startswith("/set_target"):
-
-        parts = text.split()
-
-        if len(parts) != 4:
-
-            await _send_admin_message(
-                "Format:\n"
-                "/set_target Nama platform username_baru"
-            )
-
-            return
-
-        _, name, platform, username = parts
-
-        ok = update_target(
+        ok = add_target(
             name,
-            platform,
-            username
+            x_username,
+            instagram_username,
+            instagram_user_id,
+            tiktok_username,
+            birth_date
         )
 
         if ok:
             await _send_admin_message(
-                f"✅ Target diupdate\n\n"
-                f"{name}\n"
-                f"{platform}: {username}"
+                f"✅ Target ditambahkan\n\n"
+                f"Nama: {name}\n"
+                f"X: {x_username}\n"
+                f"Instagram: {instagram_username}\n"
+                f"IG User ID: {instagram_user_id}\n"
+                f"TikTok: {tiktok_username}\n"
+                f"Birth Date: {birth_date}"
+            )
+
+        else:
+            await _send_admin_message(
+                "❌ Gagal menambahkan target"
+            )
+
+    elif cmd.startswith("/delete_target"):
+        parts = text.split()
+        if len(parts) != 2:
+            await _send_admin_message(
+                "Format:\n\n"
+                "/delete_target Nama\n\n"
+                "Contoh:\n"
+                "/delete_target Jemima"
+            )
+            return
+
+        _, name = parts
+        ok = delete_target(name)
+
+        if ok:
+            await _send_admin_message(
+                f"✅ Target dihapus\n\n"
+                f"{name}"
             )
 
         else:
@@ -294,13 +322,13 @@ async def handle_update(update):
                 "❌ Member tidak ditemukan"
             )
     
-    elif cmd == "/rebuild_targets":
+    elif cmd == "/split_targets":
         try:
             data = load_targets()
-
             rebuild_instagram_splits(
                 data
             )
+            
             await _send_admin_message(
                 "✅ Instagram target splits rebuilt"
             )
