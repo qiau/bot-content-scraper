@@ -40,10 +40,16 @@ def format_wib_time(timestamp):
     day_name = DAYS[dt.weekday()]
     month_name = MONTHS[dt.month]
 
+    separator = ":\u2060"
+    time_text = (
+        dt.strftime('%H:%M')
+        .replace(':', separator)
+    )
+
     return (
         f"{day_name}, "
         f"{dt.day} "
         f"{month_name} "
         f"{dt.year} | "
-        f"{dt.strftime('%H:\u2060%M')} WIB"
+        f"{time_text} WIB"
     )
