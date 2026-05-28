@@ -45,5 +45,5 @@ def format_wib_time(timestamp):
         f"{dt.day} "
         f"{month_name} "
         f"{dt.year} | "
-        f"{dt.strftime('%H:%M')} WIB"
+        f"{dt.strftime('%H:\u2060%M')} WIB"
     )
