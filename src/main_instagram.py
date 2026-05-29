@@ -145,7 +145,7 @@ async def main():
                     session
                 )
                 
-                await asyncio.sleep(random.uniform(5,8))
+                await asyncio.sleep(random.uniform(5,10))
 
                 story_result = await process_instagram_story(
                     name,
@@ -214,7 +214,7 @@ async def main():
 
                     break
 
-                sleep_time = random.uniform(35,90)
+                sleep_time = random.uniform(65,90)
                 await asyncio.sleep(sleep_time)
 
     except Exception as e:
